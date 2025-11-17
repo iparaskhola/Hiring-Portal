@@ -1732,11 +1732,20 @@ const CombinedMultiStepForm = () => {
   }
 
   try {
+    // Show warning about Render cold start
+    console.log('⏳ Submitting to backend... (This may take up to 60 seconds on first request)');
+    
+    // Add timeout of 90 seconds for Render cold starts
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 90000);
+    
     const response = await fetch(API_BASE + '/api/applications', {
       method: 'POST',
-      // Do NOT set Content-Type for FormData; browser will set multipart boundary
       body: fd,
+      signal: controller.signal
     });
+    
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       const errorRes = await response.json();
