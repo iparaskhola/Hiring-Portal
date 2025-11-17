@@ -559,10 +559,10 @@ const getPositionFilterOptions = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="py-2 px-2 text-xl font-medium text-gray-900">
-                        {candidate.first_name && candidate.last_name 
-                          ? `${candidate.first_name} ${candidate.last_name}`
-                          : candidate.name || 'N/A'
+                      <td className="py-2 px-2 text-xl font-medium text-gray-900" style={{ fontFamily: 'Arial, sans-serif' }}>
+                        {candidate.first_name 
+                          ? `${candidate.first_name}${candidate.last_name ? ' ' + candidate.last_name : ''}`
+                          : 'N/A'
                         }
                       </td>
                       <td className="py-2 px-2 text-xl text-gray-700">
@@ -668,7 +668,12 @@ const getPositionFilterOptions = () => {
                   </div>
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">{selectedCandidate.name || `${selectedCandidate.first_name || ''} ${selectedCandidate.last_name || ''}`.trim()}</h2>
+                  <h2 className="text-xl font-bold text-gray-900" style={{ fontFamily: 'Arial, sans-serif' }}>
+                    {selectedCandidate.first_name 
+                      ? `${selectedCandidate.first_name}${selectedCandidate.last_name ? ' ' + selectedCandidate.last_name : ''}`
+                      : 'N/A'
+                    }
+                  </h2>
                 </div>
               </div>
 
