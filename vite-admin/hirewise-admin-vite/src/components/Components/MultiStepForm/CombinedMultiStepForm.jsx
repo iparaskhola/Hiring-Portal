@@ -1768,6 +1768,16 @@ const CombinedMultiStepForm = () => {
     console.log('- user_id:', user?.id);
     console.log('- API endpoint:', API_BASE + '/api/applications');
     
+    // Log actual FormData contents
+    console.log('📦 FormData contents:');
+    for (let pair of fd.entries()) {
+      if (pair[1] instanceof File) {
+        console.log(`  ${pair[0]}: [File: ${pair[1].name}]`);
+      } else {
+        console.log(`  ${pair[0]}: ${pair[1]}`);
+      }
+    }
+    
     // Show warning about Render cold start
     console.log('⏳ Submitting to backend... (This may take up to 60 seconds on first request)');
     
