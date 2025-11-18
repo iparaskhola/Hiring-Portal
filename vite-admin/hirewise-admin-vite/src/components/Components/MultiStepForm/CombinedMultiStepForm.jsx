@@ -1402,7 +1402,9 @@ const ResearchInformation = ({ formData, setFormData, onNext, onPrevious, onSave
           />
           {errors.orchidId && <span className="error">{errors.orchidId}</span>}
         </div>
-        <div className="form-field">
+      </div>
+      <div className="form-fields-row">
+        <div className="form-field" style={{ gridColumn: '1 / -1' }}>
           <label htmlFor="googleScholarId">
             Google Scholar Link*
             <a 
