@@ -1318,11 +1318,15 @@ const ResearchInformation = ({ formData, setFormData, onNext, onPrevious, onSave
   const [errors, setErrors] = useState({});
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.scopusId) newErrors.scopusId = 'Scopus ID is required';
+    if (!formData.scopusId) {
+      newErrors.scopusId = 'Scopus ID is required';
+    } else if (!/^\d{11}$/.test(formData.scopusId)) {
+      newErrors.scopusId = 'Scopus ID must be exactly 11 digits';
+    }
     if (!formData.googleScholarId) {
-      newErrors.googleScholarId = 'Google Scholar ID is required';
-    } else if (!/^[a-zA-Z0-9]{10,20}$/.test(formData.googleScholarId)) {
-      newErrors.googleScholarId = 'Google Scholar ID must be alphanumeric, e.g., YBxwE6gAAAAJ';
+      newErrors.googleScholarId = 'Google Scholar Link is required';
+    } else if (!/^https?:\/\/(scholar\.google\.com|scholar\.google\.[a-z.]+)\/.+/.test(formData.googleScholarId)) {
+      newErrors.googleScholarId = 'Please enter a valid Google Scholar profile link';
     }
     if (formData.orchidId) {
       if (!/^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/.test(formData.orchidId)) {
@@ -1370,6 +1374,9 @@ const ResearchInformation = ({ formData, setFormData, onNext, onPrevious, onSave
             name="scopusId"
             value={formData.scopusId || ''}
             onChange={handleInputChange}
+            placeholder="Enter 11-digit Scopus ID"
+            maxLength="11"
+            pattern="\d{11}"
           />
           {errors.scopusId && <span className="error">{errors.scopusId}</span>}
         </div>
@@ -1397,22 +1404,23 @@ const ResearchInformation = ({ formData, setFormData, onNext, onPrevious, onSave
         </div>
         <div className="form-field">
           <label htmlFor="googleScholarId">
-            Google Scholar ID*
+            Google Scholar Link*
             <a 
               href="https://scholar.google.com/" 
               target="_blank" 
               rel="noopener noreferrer"
               style={{ marginLeft: '8px', cursor: 'pointer', textDecoration: 'none', fontSize: '14px', color: '#2196F3' }}
-              title="Find your Google Scholar ID"
+              title="Find your Google Scholar profile"
             >
               ℹ️
             </a>
           </label>
           <input
-            type="text"
+            type="url"
             id="googleScholarId"
             name="googleScholarId"
             value={formData.googleScholarId || ''}
+            placeholder="https://scholar.google.com/citations?user=..."
             onChange={handleInputChange}
           />
           {errors.googleScholarId && <span className="error">{errors.googleScholarId}</span>}
