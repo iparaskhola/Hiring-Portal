@@ -126,7 +126,7 @@ const PositionSelection = ({ formData, setFormData, onNext, onSaveExit }) => {
         >
           <option value="">Select Position</option>
           <option value="teaching">Teaching</option>
-          <option value="non-teaching">Non-Teaching</option>
+          <option value="non-teaching" disabled style={{ color: '#999' }}>Non-Teaching</option>
         </select>
         {errors.position && <span className="error">{errors.position}</span>}
       </div>
