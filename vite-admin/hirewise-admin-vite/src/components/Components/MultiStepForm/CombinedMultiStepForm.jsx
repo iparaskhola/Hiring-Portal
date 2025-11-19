@@ -551,9 +551,21 @@ const EducationDetails = ({ formData, setFormData, onNext, onPrevious, onSaveExi
           formData.phdStatus === 'Pursuing'
             ? 'Pursuing Year is required'
             : 'Passing Year is required';
-      } else if (formData.phdStatus === 'Awarded') {
+      } else {
         const yearNum = Number(formData.phdYear);
-        if (Number.isFinite(yearNum) && yearNum > currentYear) {
+        const bachelorYear = Number(formData.bachelorYear);
+        const masterYear = Number(formData.masterYear);
+        
+        // PhD year must be after bachelor's year
+        if (bachelorYear && yearNum < bachelorYear) {
+          newErrors.phdYear = 'PhD year cannot be before Bachelor\'s passing year';
+        }
+        // PhD year must be after master's year
+        else if (masterYear && yearNum < masterYear) {
+          newErrors.phdYear = 'PhD year cannot be before Master\'s passing year';
+        }
+        // If awarded, cannot be in future
+        else if (formData.phdStatus === 'Awarded' && Number.isFinite(yearNum) && yearNum > currentYear) {
           newErrors.phdYear = 'Passed year cannot be in the future';
         }
       }
@@ -913,7 +925,7 @@ const EducationDetails = ({ formData, setFormData, onNext, onPrevious, onSaveExi
               name="phdYear"
               value={formData.phdYear || ''}
               onChange={handleInputChange}
-              min="1950"
+              min={formData.masterYear || formData.bachelorYear || 1950}
               max={formData.phdStatus === 'Awarded' ? new Date().getFullYear() : 2050}
             />
             {errors.phdYear && <span className="error">{errors.phdYear}</span>}
