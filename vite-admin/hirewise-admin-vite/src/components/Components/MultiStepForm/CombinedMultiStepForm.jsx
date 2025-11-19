@@ -1787,6 +1787,16 @@ const CombinedMultiStepForm = () => {
   const [completedSteps, setCompletedSteps] = useState([]);
   const [submitting, setSubmitting] = useState(false);
 
+  // Wake up backend when user reaches final step (Documentation - step 6)
+  useEffect(() => {
+    if (currentStep === 6) {
+      // Pre-warm backend to avoid timeout on submission
+      fetch(`${API_BASE}/api`)
+        .then(() => console.log('✅ Backend warmed up for submission'))
+        .catch(() => console.log('⚠️ Backend warming attempt (will retry on submit)'));
+    }
+  }, [currentStep]);
+
   // Helper function for department short names
   const getDepartmentShortName = (dept) => {
     if (!dept) return '';
@@ -1982,17 +1992,12 @@ const CombinedMultiStepForm = () => {
   }
 
   try {
-    // Set a reasonable 20-second timeout for better UX
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 20000);
-    
+    // No artificial timeout - let browser handle naturally (typically 2-5 minutes)
+    // Backend may take 30-60s on first request if server is sleeping
     const response = await fetch(API_BASE + '/api/applications', {
       method: 'POST',
-      body: fd,
-      signal: controller.signal
+      body: fd
     });
-    
-    clearTimeout(timeoutId);
 
     if (!response.ok) {
       let errorRes;
