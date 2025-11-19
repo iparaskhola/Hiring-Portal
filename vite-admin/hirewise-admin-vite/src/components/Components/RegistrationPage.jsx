@@ -280,12 +280,12 @@ const RegistrationPage = ({ onRegistrationSuccess, onLoginSuccess }) => {
                 <span className="figma-user-icon"><svg width="20" height="20" fill="none" viewBox="0 0 20 20"><circle cx="10" cy="10" r="10" fill="#0E76A8"/><path d="M10 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM6.5 15v-1a3.5 3.5 0 017 0v1" stroke="#fff" strokeWidth="1.2" strokeLinecap="round"/></svg></span>
                 Registration Form
               </div>
-              <form className="figma-form" onSubmit={handleRegistrationSubmit} autoComplete="off">
+              <form className="figma-form" onSubmit={handleRegistrationSubmit} autoComplete="off" key="registration-form">
                 {/* Name */}
                 <div className="figma-form-group">
                   <label htmlFor="name" className="figma-label-blue">Full Name</label>
                   <div className={`figma-float-label ${form.name ? "filled" : ""}`}>
-                    <input className="figma-input" type="text" name="name" id="name" value={form.name} onChange={handleChange} onFocus={() => handleFocus("name")} autoComplete="off" placeholder=" " />
+                    <input className="figma-input" type="text" name="name" id="name" value={form.name} onChange={handleChange} onFocus={() => handleFocus("name")} autoComplete="new-password" placeholder=" " />
                   </div>
                   <div className="figma-warning">{warning.name && !isFieldEnabled("name") && "⚠ Please fill out the previous field first."}</div>
                   {touched.name && fieldErrors.name && typeof fieldErrors.name === 'string' && <div className="figma-error">{fieldErrors.name}</div>}
