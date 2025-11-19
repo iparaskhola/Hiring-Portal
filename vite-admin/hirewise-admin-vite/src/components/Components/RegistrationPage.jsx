@@ -132,7 +132,7 @@ const RegistrationPage = ({ onRegistrationSuccess, onLoginSuccess }) => {
     setIsSubmitting(true);
     
     try {
-      // 1) Register user (registerUser already handles signUp + auto session creation)
+      // 1) Register user via backend API
       const result = await registerUser({
         name: form.name,
         email: form.email,
@@ -142,25 +142,26 @@ const RegistrationPage = ({ onRegistrationSuccess, onLoginSuccess }) => {
 
       console.log('Registration API successful:', result);
       
-      // Wait a moment for Supabase session to be fully established
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // 2) Sign in on the frontend to create session
+      console.log('Signing in to create frontend session');
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: form.email,
+        password: form.password
+      });
       
-      // Verify session is active
-      const { data: { session } } = await supabase.auth.getSession();
-      console.log('Session after registration:', session ? 'Active' : 'No session');
-      
-      if (!session) {
-        console.error('No session after registration - trying to sign in');
-        await supabase.auth.signInWithPassword({
-          email: form.email,
-          password: form.password
-        });
-        await new Promise(resolve => setTimeout(resolve, 500));
+      if (error) {
+        console.error('Sign in error after registration:', error);
+        throw new Error('Registration succeeded but automatic login failed. Please login manually.');
       }
+      
+      console.log('Sign in successful, session created:', data.session?.user?.email);
+      
+      // Wait a moment for session to be fully established
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       console.log('Navigating to /application');
       
-      // 2) Navigate immediately - Supabase auto-creates session on signUp
+      // 3) Navigate to application form
       navigate('/application');
     } catch (err) {
       console.error('Registration error:', err);
