@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import "./RegistrationPage.css";
 import { registerUser } from '../../lib/auth';
 import { loginUser } from '../../lib/auth';
 import { supabase } from '../../../lib/supabase-client';
 import { COUNTRY_CODES } from '../../lib/country-codes';
+import { API_BASE } from '../../lib/config';
 
 const bulletIcons = [
   <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#0E76A8"/><path d="M5.5 9.5L8 12l4-4" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>,
@@ -129,7 +130,6 @@ const RegistrationPage = ({ onRegistrationSuccess, onLoginSuccess }) => {
     }
 
     setIsSubmitting(true);
-    setGeneralFormError('⏳ Connecting to server... This may take up to 45 seconds on first use.');
     
     try {
       // 1) Register user via backend API
@@ -140,7 +140,7 @@ const RegistrationPage = ({ onRegistrationSuccess, onLoginSuccess }) => {
         password: form.password
       });
       
-      // Clear the waiting message
+      // Clear any previous errors
       setGeneralFormError('');
       
       // 2) Sign in on the frontend to create session
@@ -182,6 +182,35 @@ const RegistrationPage = ({ onRegistrationSuccess, onLoginSuccess }) => {
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [serverReady, setServerReady] = useState(false);
+  const [serverChecking, setServerChecking] = useState(true);
+
+  // Wake up server on page load
+  useEffect(() => {
+    const wakeUpServer = async () => {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 45000);
+        
+        const response = await fetch(`${API_BASE}/api`, {
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (response.ok) {
+          setServerReady(true);
+        }
+      } catch (err) {
+        console.log('Server wake-up in progress...');
+        // Server is still waking, but that's ok - we tried
+      } finally {
+        setServerChecking(false);
+      }
+    };
+    
+    wakeUpServer();
+  }, []);
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
@@ -361,6 +390,34 @@ const RegistrationPage = ({ onRegistrationSuccess, onLoginSuccess }) => {
                   <div className="figma-warning">{warning.confirmPassword && !isFieldEnabled("confirmPassword") && "⚠ Please fill out the previous field first."}</div>
                   {touched.confirmPassword && fieldErrors.confirmPassword && typeof fieldErrors.confirmPassword === 'string' && <div className="figma-error">{fieldErrors.confirmPassword}</div>}
                 </div>
+                {serverChecking && (
+                  <div style={{
+                    padding: '0.8rem',
+                    backgroundColor: '#fff3cd',
+                    border: '1px solid #ffc107',
+                    borderRadius: '6px',
+                    color: '#856404',
+                    fontSize: '0.85rem',
+                    marginBottom: '1rem',
+                    textAlign: 'center'
+                  }}>
+                    ⏳ Preparing server... Please wait
+                  </div>
+                )}
+                {!serverChecking && !serverReady && (
+                  <div style={{
+                    padding: '0.8rem',
+                    backgroundColor: '#fff3cd',
+                    border: '1px solid #ffc107',
+                    borderRadius: '6px',
+                    color: '#856404',
+                    fontSize: '0.85rem',
+                    marginBottom: '1rem',
+                    textAlign: 'center'
+                  }}>
+                    ⚠️ Server is waking up. Registration may take 30-45 seconds.
+                  </div>
+                )}
                 {generalFormError && <div className="figma-error">{generalFormError}</div>}
                 <button 
                   className="figma-apply-btn" 
