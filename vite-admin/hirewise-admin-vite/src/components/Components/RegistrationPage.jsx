@@ -390,34 +390,6 @@ const RegistrationPage = ({ onRegistrationSuccess, onLoginSuccess }) => {
                   <div className="figma-warning">{warning.confirmPassword && !isFieldEnabled("confirmPassword") && "⚠ Please fill out the previous field first."}</div>
                   {touched.confirmPassword && fieldErrors.confirmPassword && typeof fieldErrors.confirmPassword === 'string' && <div className="figma-error">{fieldErrors.confirmPassword}</div>}
                 </div>
-                {serverChecking && (
-                  <div style={{
-                    padding: '0.8rem',
-                    backgroundColor: '#fff3cd',
-                    border: '1px solid #ffc107',
-                    borderRadius: '6px',
-                    color: '#856404',
-                    fontSize: '0.85rem',
-                    marginBottom: '1rem',
-                    textAlign: 'center'
-                  }}>
-                    ⏳ Preparing server... Please wait
-                  </div>
-                )}
-                {!serverChecking && !serverReady && (
-                  <div style={{
-                    padding: '0.8rem',
-                    backgroundColor: '#fff3cd',
-                    border: '1px solid #ffc107',
-                    borderRadius: '6px',
-                    color: '#856404',
-                    fontSize: '0.85rem',
-                    marginBottom: '1rem',
-                    textAlign: 'center'
-                  }}>
-                    ⚠️ Server is waking up. Registration may take 30-45 seconds.
-                  </div>
-                )}
                 {generalFormError && <div className="figma-error">{generalFormError}</div>}
                 <button 
                   className="figma-apply-btn" 
