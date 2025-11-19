@@ -162,3 +162,34 @@ th {
   align-items: center;
   gap: 5px;
 }
+
+/* Ensure all form-related text in admin panel uses the same font size and family */
+.admin-dashboard input,
+.admin-dashboard select,
+.admin-dashboard textarea,
+.admin-dashboard button,
+.admin-dashboard .form-field label,
+.admin-dashboard .filter-group label,
+.admin-dashboard .notification p,
+.admin-dashboard th,
+.admin-dashboard td,
+.admin-dashboard .view-btn,
+.admin-dashboard .save-exit-btn,
+.admin-dashboard .filter-group select,
+.admin-dashboard .filter-group input {
+  font-size: 20pt !important;
+  font-family: Arial, sans-serif !important;
+}
+
+/* Placeholder text sizing */
+.admin-dashboard input::placeholder,
+.admin-dashboard textarea::placeholder {
+  font-size: 20pt !important;
+  opacity: 0.8;
+}
+
+/* Select option text */
+.admin-dashboard select option {
+  font-size: 20pt !important;
+  font-family: Arial, sans-serif !important;
+}
