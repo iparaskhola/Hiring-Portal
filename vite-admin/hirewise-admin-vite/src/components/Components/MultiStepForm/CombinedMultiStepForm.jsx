@@ -1589,7 +1589,12 @@ const CombinedMultiStepForm = () => {
   useEffect(() => {
     const loadDraft = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        console.log('❌ No user found, not loading draft');
+        return;
+      }
+
+      console.log('👤 Loading data for user:', user.id, user.email);
 
       try {
         // First check if user has already submitted an application
@@ -1601,7 +1606,7 @@ const CombinedMultiStepForm = () => {
 
         // If application exists, don't load draft
         if (existingApp) {
-          console.log('Application already submitted, not loading draft');
+          console.log('✅ Application already submitted, not loading draft');
           return;
         }
 
@@ -1612,15 +1617,21 @@ const CombinedMultiStepForm = () => {
           .eq('user_id', user.id)
           .maybeSingle();
 
+        if (error) {
+          console.log('⚠️ Error loading draft:', error.message);
+          return;
+        }
+
         if (data && data.form_data) {
-          console.log('Loading draft for user:', user.id);
+          console.log('📋 Loading draft for user:', user.id);
+          console.log('Draft data firstName:', data.form_data.firstName);
           setFormData(data.form_data);
           setCurrentStep(data.current_step);
         } else {
-          console.log('No draft found for new user:', user.id);
+          console.log('✨ No draft found - fresh form for user:', user.id, user.email);
         }
       } catch (err) {
-        console.log('No draft found or error:', err.message);
+        console.log('❌ Error in loadDraft:', err.message);
       }
     };
 
@@ -2057,35 +2068,34 @@ const CombinedMultiStepForm = () => {
             <div className="error">Error: {error}</div>
           ) : (
             <>
-              <div>
-                {fullName && (
-                  <div
-                    className="user-name"
-                    style={{
-                      fontWeight: '600',
-                      fontSize: '1.1rem',
-                      color: '#333',
-                      fontFamily: 'Arial, sans-serif',
-                    }}
-                  >
-                    Welcome, <span style={{ fontWeight: '700', color: '#000' }}>{fullName}</span>
-                  </div>
-                )}
-                {formData.position && (
-                  <div
-                    className="user-position"
-                    style={{
-                      fontWeight: '500',
-                      fontSize: '1.05rem',
-                      color: '#333',
-                      marginTop: '2px',
-                      fontFamily: 'Arial, sans-serif',
-                    }}
-                  >
-                    Position: <span style={{ fontWeight: '600' }}>
-                      {typeof formData.position === 'string'
-                      ? formData.position.charAt(0).toUpperCase() + formData.position.slice(1)
-                      : formData.position}
+              {fullName && (
+                <div
+                  className="user-name"
+                  style={{
+                    fontWeight: '600',
+                    fontSize: '1.1rem',
+                    color: '#333',
+                    fontFamily: 'Arial, sans-serif',
+                  }}
+                >
+                  Welcome, <span style={{ fontWeight: '700', color: '#000' }}>{fullName}</span>
+                </div>
+              )}
+              {formData.position && (
+                <div
+                  className="user-position"
+                  style={{
+                    fontWeight: '500',
+                    fontSize: '1.05rem',
+                    color: '#333',
+                    marginTop: '2px',
+                    fontFamily: 'Arial, sans-serif',
+                  }}
+                >
+                  Position: <span style={{ fontWeight: '600' }}>
+                    {typeof formData.position === 'string'
+                    ? formData.position.charAt(0).toUpperCase() + formData.position.slice(1)
+                    : formData.position}
                   </span>
                   {formData.department && (
                     <> • <span>{getDepartmentShortName(formData.department)}</span></>
