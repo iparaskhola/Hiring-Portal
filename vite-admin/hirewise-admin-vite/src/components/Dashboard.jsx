@@ -878,36 +878,55 @@ const getPositionFilterOptions = () => {
                 </div>
 
                 {/* Right Side - Visual Representation */}
-                <div className="space-y-6">
+                <div className="space-y-4">
                   {!selectedCandidate.loading && (
                     <>
-                      {/* Score Overview Card */}
-                      <div className="bg-gradient-to-br from-blue-50 to-indigo-100 border-2 border-indigo-200 rounded-lg p-6 shadow-lg">
-                        <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">Overall Ranking</h3>
-                        <div className="flex items-center justify-center mb-6">
-                          <div className={`w-24 h-24 rounded-full flex items-center justify-center text-3xl font-bold text-white ${
+                      {/* Score Overview Card - Compact */}
+                      <div className="bg-gradient-to-br from-blue-50 to-indigo-100 border-2 border-indigo-200 rounded-lg p-4 shadow-lg">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-xs text-gray-600 mb-1">Overall Ranking</p>
+                            <p className="text-3xl font-bold text-indigo-600">{selectedCandidate.total_score?.toFixed(1) || 'N/A'}</p>
+                          </div>
+                          <div className={`w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold text-white ${
                             (selectedCandidate.gender || '').toLowerCase() === 'female' ? 'bg-pink-500' : 'bg-blue-500'
                           } shadow-xl`}>
                             #{selectedCandidate.listRank || 1}
                           </div>
                         </div>
-                        <div className="text-center">
-                          <p className="text-sm text-gray-600 mb-1">Total Score</p>
-                          <p className="text-4xl font-bold text-indigo-600">{selectedCandidate.total_score?.toFixed(1) || 'N/A'}</p>
+                      </div>
+
+                      {/* Quick Stats Grid - Moved to top */}
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center">
+                          <p className="text-xs font-semibold text-blue-600 uppercase mb-1">QS Score</p>
+                          <p className="text-2xl font-bold text-blue-700">{selectedCandidate.qs10 || 0}</p>
+                        </div>
+                        <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 text-center">
+                          <p className="text-xs font-semibold text-orange-600 uppercase mb-1">NIRF Score</p>
+                          <p className="text-2xl font-bold text-orange-700">{selectedCandidate.nirf10 || 0}</p>
+                        </div>
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
+                          <p className="text-xs font-semibold text-green-600 uppercase mb-1">Research</p>
+                          <p className="text-2xl font-bold text-green-700">{selectedCandidate.researchScore10 || 0}</p>
+                        </div>
+                        <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 text-center">
+                          <p className="text-xs font-semibold text-purple-600 uppercase mb-1">Papers</p>
+                          <p className="text-2xl font-bold text-purple-700">{selectedCandidate.totalPapers || 0}</p>
                         </div>
                       </div>
 
-                      {/* University Ranking Scores */}
-                      <div className="bg-white border rounded-lg p-6 shadow-sm">
-                        <h3 className="text-lg font-bold text-gray-900 mb-4 border-b pb-2">University Rankings</h3>
-                        <div className="space-y-4">
+                      {/* University Ranking Scores - Compact bars */}
+                      <div className="bg-white border rounded-lg p-4 shadow-sm">
+                        <h3 className="text-sm font-bold text-gray-900 mb-3">Score Breakdown</h3>
+                        <div className="space-y-3">
                           {/* QS Score Bar */}
                           <div>
-                            <div className="flex justify-between items-center mb-2">
-                              <span className="text-sm font-semibold text-gray-700">QS Ranking</span>
-                              <span className="text-lg font-bold text-blue-600">{selectedCandidate.qs10 || 0}/10</span>
+                            <div className="flex justify-between items-center mb-1">
+                              <span className="text-xs font-semibold text-gray-700">QS Ranking</span>
+                              <span className="text-sm font-bold text-blue-600">{selectedCandidate.qs10 || 0}/10</span>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                               <div 
                                 className="bg-gradient-to-r from-blue-400 to-blue-600 h-full rounded-full transition-all duration-500"
                                 style={{ width: `${((selectedCandidate.qs10 || 0) / 10) * 100}%` }}
@@ -917,11 +936,11 @@ const getPositionFilterOptions = () => {
 
                           {/* NIRF Score Bar */}
                           <div>
-                            <div className="flex justify-between items-center mb-2">
-                              <span className="text-sm font-semibold text-gray-700">NIRF Ranking</span>
-                              <span className="text-lg font-bold text-orange-600">{selectedCandidate.nirf10 || 0}/10</span>
+                            <div className="flex justify-between items-center mb-1">
+                              <span className="text-xs font-semibold text-gray-700">NIRF Ranking</span>
+                              <span className="text-sm font-bold text-orange-600">{selectedCandidate.nirf10 || 0}/10</span>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                               <div 
                                 className="bg-gradient-to-r from-orange-400 to-orange-600 h-full rounded-full transition-all duration-500"
                                 style={{ width: `${((selectedCandidate.nirf10 || 0) / 10) * 100}%` }}
@@ -931,11 +950,11 @@ const getPositionFilterOptions = () => {
 
                           {/* Research Score Bar */}
                           <div>
-                            <div className="flex justify-between items-center mb-2">
-                              <span className="text-sm font-semibold text-gray-700">Research Score</span>
-                              <span className="text-lg font-bold text-green-600">{selectedCandidate.researchScore10 || 0}/10</span>
+                            <div className="flex justify-between items-center mb-1">
+                              <span className="text-xs font-semibold text-gray-700">Research Score</span>
+                              <span className="text-sm font-bold text-green-600">{selectedCandidate.researchScore10 || 0}/10</span>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                               <div 
                                 className="bg-gradient-to-r from-green-400 to-green-600 h-full rounded-full transition-all duration-500"
                                 style={{ width: `${((selectedCandidate.researchScore10 || 0) / 10) * 100}%` }}
@@ -945,14 +964,14 @@ const getPositionFilterOptions = () => {
                         </div>
                       </div>
 
-                      {/* Score Breakdown Pie Chart */}
-                      <div className="bg-white border rounded-lg p-6 shadow-sm">
-                        <h3 className="text-lg font-bold text-gray-900 mb-4 border-b pb-2">Score Distribution</h3>
-                        <ResponsiveContainer width="100%" height={250}>
+                      {/* Score Distribution Pie Chart - Compact */}
+                      <div className="bg-white border rounded-lg p-4 shadow-sm">
+                        <h3 className="text-sm font-bold text-gray-900 mb-2">Score Distribution</h3>
+                        <ResponsiveContainer width="100%" height={200}>
                           <PieChart>
                             <Pie
                               data={[
-                                { name: 'University Ranking', value: Math.max(selectedCandidate.qs10 || 0, selectedCandidate.nirf10 || 0), color: '#3b82f6' },
+                                { name: 'University', value: Math.max(selectedCandidate.qs10 || 0, selectedCandidate.nirf10 || 0), color: '#3b82f6' },
                                 { name: 'Research', value: selectedCandidate.researchScore10 || 0, color: '#10b981' },
                                 { name: 'Other', value: Math.max(0, (selectedCandidate.total_score || 0) - (Math.max(selectedCandidate.qs10 || 0, selectedCandidate.nirf10 || 0) + (selectedCandidate.researchScore10 || 0))), color: '#f59e0b' }
                               ].filter(item => item.value > 0)}
@@ -960,12 +979,12 @@ const getPositionFilterOptions = () => {
                               cy="50%"
                               labelLine={false}
                               label={({ name, value }) => `${name}: ${value.toFixed(1)}`}
-                              outerRadius={80}
+                              outerRadius={70}
                               fill="#8884d8"
                               dataKey="value"
                             >
                               {[
-                                { name: 'University Ranking', value: Math.max(selectedCandidate.qs10 || 0, selectedCandidate.nirf10 || 0), color: '#3b82f6' },
+                                { name: 'University', value: Math.max(selectedCandidate.qs10 || 0, selectedCandidate.nirf10 || 0), color: '#3b82f6' },
                                 { name: 'Research', value: selectedCandidate.researchScore10 || 0, color: '#10b981' },
                                 { name: 'Other', value: Math.max(0, (selectedCandidate.total_score || 0) - (Math.max(selectedCandidate.qs10 || 0, selectedCandidate.nirf10 || 0) + (selectedCandidate.researchScore10 || 0))), color: '#f59e0b' }
                               ].filter(item => item.value > 0).map((entry, index) => (
@@ -977,50 +996,74 @@ const getPositionFilterOptions = () => {
                         </ResponsiveContainer>
                       </div>
 
-                      {/* Research Metrics Bar Chart */}
-                      {selectedCandidate.totalPapers > 0 && (
-                        <div className="bg-white border rounded-lg p-6 shadow-sm">
-                          <h3 className="text-lg font-bold text-gray-900 mb-4 border-b pb-2">Research Metrics</h3>
-                          <ResponsiveContainer width="100%" height={200}>
-                            <BarChart
-                              data={[
-                                { 
-                                  name: 'Publications', 
-                                  count: selectedCandidate.totalPapers || 0 
-                                }
-                              ]}
-                            >
-                              <CartesianGrid strokeDasharray="3 3" />
-                              <XAxis dataKey="name" />
-                              <YAxis />
-                              <Tooltip />
-                              <Bar dataKey="count" fill="#8b5cf6" />
-                            </BarChart>
-                          </ResponsiveContainer>
-                          <div className="mt-4 text-center">
-                            <p className="text-sm text-gray-600">Total Publications</p>
-                            <p className="text-3xl font-bold text-purple-600">{selectedCandidate.totalPapers || 0}</p>
-                          </div>
-                        </div>
-                      )}
+                      {/* Research Metrics - Compact */}
+                      <div className="bg-white border rounded-lg p-4 shadow-sm">
+                        <h3 className="text-sm font-bold text-gray-900 mb-2">Research Metrics</h3>
+                        <ResponsiveContainer width="100%" height={150}>
+                          <BarChart
+                            data={[
+                              { 
+                                name: 'Publications', 
+                                count: selectedCandidate.totalPapers || 0 
+                              }
+                            ]}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                            <YAxis tick={{ fontSize: 12 }} />
+                            <Tooltip />
+                            <Bar dataKey="count" fill="#8b5cf6" />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
 
-                      {/* Quick Stats Grid */}
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
-                          <p className="text-xs font-semibold text-blue-600 uppercase mb-1">QS Score</p>
-                          <p className="text-2xl font-bold text-blue-700">{selectedCandidate.qs10 || 0}</p>
-                        </div>
-                        <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 text-center">
-                          <p className="text-xs font-semibold text-orange-600 uppercase mb-1">NIRF Score</p>
-                          <p className="text-2xl font-bold text-orange-700">{selectedCandidate.nirf10 || 0}</p>
-                        </div>
-                        <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-                          <p className="text-xs font-semibold text-green-600 uppercase mb-1">Research</p>
-                          <p className="text-2xl font-bold text-green-700">{selectedCandidate.researchScore10 || 0}</p>
-                        </div>
-                        <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 text-center">
-                          <p className="text-xs font-semibold text-purple-600 uppercase mb-1">Papers</p>
-                          <p className="text-2xl font-bold text-purple-700">{selectedCandidate.totalPapers || 0}</p>
+                      {/* Comparison Chart - New Addition */}
+                      <div className="bg-white border rounded-lg p-4 shadow-sm">
+                        <h3 className="text-sm font-bold text-gray-900 mb-2">Performance Overview</h3>
+                        <ResponsiveContainer width="100%" height={180}>
+                          <BarChart
+                            data={[
+                              { metric: 'QS', score: selectedCandidate.qs10 || 0, fill: '#3b82f6' },
+                              { metric: 'NIRF', score: selectedCandidate.nirf10 || 0, fill: '#f97316' },
+                              { metric: 'Research', score: selectedCandidate.researchScore10 || 0, fill: '#10b981' }
+                            ]}
+                            layout="horizontal"
+                          >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis type="number" domain={[0, 10]} tick={{ fontSize: 12 }} />
+                            <YAxis dataKey="metric" type="category" tick={{ fontSize: 12 }} />
+                            <Tooltip />
+                            <Bar dataKey="score" radius={[0, 8, 8, 0]}>
+                              {[
+                                { metric: 'QS', score: selectedCandidate.qs10 || 0, fill: '#3b82f6' },
+                                { metric: 'NIRF', score: selectedCandidate.nirf10 || 0, fill: '#f97316' },
+                                { metric: 'Research', score: selectedCandidate.researchScore10 || 0, fill: '#10b981' }
+                              ].map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.fill} />
+                              ))}
+                            </Bar>
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+
+                      {/* University & Contact Info */}
+                      <div className="bg-white border rounded-lg p-4 shadow-sm">
+                        <h3 className="text-sm font-bold text-gray-900 mb-3">Institution Details</h3>
+                        <div className="space-y-2 text-xs">
+                          <div>
+                            <p className="font-semibold text-gray-500 uppercase">University</p>
+                            <p className="text-sm text-gray-900">{selectedCandidate.university || selectedCandidate.phd_institute || selectedCandidate.institution || 'N/A'}</p>
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-500 uppercase">Graduation Year</p>
+                            <p className="text-sm text-gray-900">{selectedCandidate.graduation_year || selectedCandidate.phd_year || 'N/A'}</p>
+                          </div>
+                          {selectedCandidate.phd_status && selectedCandidate.phd_status !== 'Not done' && (
+                            <div>
+                              <p className="font-semibold text-gray-500 uppercase">PhD Status</p>
+                              <p className="text-sm text-gray-900">{selectedCandidate.phd_status}</p>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </>
