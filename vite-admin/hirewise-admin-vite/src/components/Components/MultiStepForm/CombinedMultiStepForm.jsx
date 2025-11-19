@@ -1884,15 +1884,18 @@ const CombinedMultiStepForm = () => {
   console.log('🔐 Getting authenticated user...');
   let user, authError;
   try {
-    const authTimeout = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Auth timeout')), 10000)
-    );
-    const authCall = supabase.auth.getUser();
-    const result = await Promise.race([authCall, authTimeout]);
-    user = result.data?.user;
-    authError = result.error;
-    console.log('👤 User:', user?.id ? `Found (${user.id})` : 'Not found');
-    console.log('🔑 Auth error:', authError || 'None');
+    // Use getSession instead of getUser for faster response
+    const { data: { session }, error } = await supabase.auth.getSession();
+    if (error) {
+      authError = error;
+      console.error('🔑 Session error:', error);
+    } else if (!session) {
+      authError = new Error('No active session');
+      console.error('❌ No session found');
+    } else {
+      user = session.user;
+      console.log('👤 User from session:', user?.id ? `Found (${user.id})` : 'Not found');
+    }
   } catch (err) {
     console.error('❌ Auth call failed:', err);
     authError = err;
