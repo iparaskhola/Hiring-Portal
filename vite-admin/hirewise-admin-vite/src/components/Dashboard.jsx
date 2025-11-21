@@ -82,6 +82,17 @@ const Dashboard = () => {
     };
 
     fetchCandidates();
+    
+    // Refetch when window gains focus (user returns from other pages)
+    const handleFocus = () => {
+      fetchCandidates();
+    };
+    
+    window.addEventListener('focus', handleFocus);
+    
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
   }, []);
 
   // Remove hardcoded candidates; only show fetched candidates

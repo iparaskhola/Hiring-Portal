@@ -16,34 +16,34 @@ const AllCandidates = () => {
 
   const departments = ['All', 'law', 'liberal', 'engineering', 'management'];
 
-  useEffect(() => {
-    const fetchCandidates = async () => {
-      try {
-        setLoading(true);
-        
-        // Direct Supabase query to get ALL fields including research data
-        let query = supabase
-          .from('faculty_applications')
-          .select('*')
-          .order('created_at', { ascending: false });
-        
-        if (selectedDepartment !== 'All') {
-          query = query.eq('department', selectedDepartment);
-        }
-        
-        const { data, error } = await query;
-        
-        if (error) throw error;
-        
-        setCandidates(data || []);
-      } catch (err) {
-        console.error('Error fetching candidates:', err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
+  const fetchCandidates = async () => {
+    try {
+      setLoading(true);
+      
+      // Direct Supabase query to get ALL fields including research data
+      let query = supabase
+        .from('faculty_applications')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (selectedDepartment !== 'All') {
+        query = query.eq('department', selectedDepartment);
       }
-    };
+      
+      const { data, error } = await query;
+      
+      if (error) throw error;
+      
+      setCandidates(data || []);
+    } catch (err) {
+      console.error('Error fetching candidates:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchCandidates();
   }, [selectedDepartment]); // Re-fetch when department filter changes
 
@@ -132,22 +132,14 @@ const AllCandidates = () => {
         .eq('id', selectedCandidate.id);
       if (updErr) throw updErr;
 
-      // Reflect locally in selected candidate and list
-      setSelectedCandidate((prev) => prev ? { ...prev, status: nextStatus } : prev);
-      setCandidates((prev) => {
-        // If rejected, remove from the "All Candidates" list immediately
-        if (nextStatus === 'rejected') {
-          return prev.filter(c => c.id !== selectedCandidate.id);
-        }
-        // Otherwise just update the status in-place
-        return prev.map(c => c.id === selectedCandidate.id ? { ...c, status: nextStatus } : c);
-      });
-
-      // Optional: close after action
-      if (nextStatus === 'rejected') {
-        closeModal();
-      }
+      // Close modal first
+      closeModal();
+      
+      // Show success message
       alert(nextStatus === 'rejected' ? 'Application moved to Rejected.' : 'Application moved to Waiting (In Review).');
+      
+      // Refetch candidates to ensure data is synchronized
+      await fetchCandidates();
     } catch (e) {
       console.error('Status update failed:', e);
       alert(e.message || 'Failed to update status');
