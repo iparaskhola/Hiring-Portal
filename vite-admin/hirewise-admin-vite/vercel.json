@@ -4,10 +4,6 @@
   "installCommand": "npm install",
   "framework": "vite",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/" ,
-  "timestamp": "2025-11-21 23:00:34"
-}
+    { "source": "/(.*)", "destination": "/" }
   ]
-,
-  "timestamp": "2025-11-21 23:00:34"
 }
