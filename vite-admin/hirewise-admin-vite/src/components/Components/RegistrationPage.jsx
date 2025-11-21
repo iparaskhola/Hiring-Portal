@@ -281,7 +281,13 @@ const RegistrationPage = ({ onRegistrationSuccess, onLoginSuccess }) => {
                     required 
                     autoComplete="off" 
                     placeholder="Email Address"
-                    style={{ fontSize: '1rem', padding: '14px 16px' }}
+                    style={{ 
+                      fontSize: '1rem', 
+                      padding: '14px 16px',
+                      border: '2px solid #9ca3af',
+                      borderRadius: '12px',
+                      backgroundColor: '#ffffff'
+                    }}
                   />
                 </div>
 
@@ -296,7 +302,13 @@ const RegistrationPage = ({ onRegistrationSuccess, onLoginSuccess }) => {
                     required 
                     autoComplete="off" 
                     placeholder="Password"
-                    style={{ fontSize: '1rem', padding: '14px 16px' }}
+                    style={{ 
+                      fontSize: '1rem', 
+                      padding: '14px 16px',
+                      border: '2px solid #9ca3af',
+                      borderRadius: '12px',
+                      backgroundColor: '#ffffff'
+                    }}
                   />
                 </div>
                 {loginError && <div className="figma-error">{loginError}</div>}
