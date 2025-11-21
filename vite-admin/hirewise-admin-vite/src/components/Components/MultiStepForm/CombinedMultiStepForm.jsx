@@ -728,6 +728,7 @@ const EducationDetails = ({ formData, setFormData, onNext, onPrevious, onSaveExi
             step="0.01"
             placeholder={formData.bachelorCgpaScale === 'percentage' ? 'Enter 0-100' : 
                         formData.bachelorCgpaScale === 'cgpa10' ? 'Enter 0-10' : 'Enter 0-4'}
+            style={{ width: '120px' }}
           />
           {errors.bachelorCgpa && <span className="error">{errors.bachelorCgpa}</span>}
         </div>
@@ -856,6 +857,7 @@ const EducationDetails = ({ formData, setFormData, onNext, onPrevious, onSaveExi
             step="0.01"
             placeholder={formData.masterCgpaScale === 'percentage' ? 'Enter 0-100' : 
                         formData.masterCgpaScale === 'cgpa10' ? 'Enter 0-10' : 'Enter 0-4'}
+            style={{ width: '120px' }}
           />
           {errors.masterCgpa && <span className="error">{errors.masterCgpa}</span>}
         </div>
