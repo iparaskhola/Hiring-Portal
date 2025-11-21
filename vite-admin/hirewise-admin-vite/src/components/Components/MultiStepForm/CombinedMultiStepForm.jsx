@@ -705,7 +705,7 @@ const EducationDetails = ({ formData, setFormData, onNext, onPrevious, onSaveExi
             name="bachelorCgpaScale"
             value={formData.bachelorCgpaScale || 'percentage'}
             onChange={handleInputChange}
-            style={{ width: '250px' }}
+            style={{ minWidth: '280px', maxWidth: '280px' }}
           >
             <option value="percentage">Percentage (Out of 100)</option>
             <option value="cgpa10">CGPA (Out of 10)</option>
@@ -835,7 +835,7 @@ const EducationDetails = ({ formData, setFormData, onNext, onPrevious, onSaveExi
             name="masterCgpaScale"
             value={formData.masterCgpaScale || 'percentage'}
             onChange={handleInputChange}
-            style={{ width: '250px' }}
+            style={{ minWidth: '280px', maxWidth: '280px' }}
           >
             <option value="percentage">Percentage (Out of 100)</option>
             <option value="cgpa10">CGPA (Out of 10)</option>
