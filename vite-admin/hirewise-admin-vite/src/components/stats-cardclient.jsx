@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase-client'
 
-import { Users, Eye, CheckCircle, XCircle } from 'lucide-react'
+import { Users, Eye, CheckCircle, XCircle, Trash2 } from 'lucide-react'
 
 export default function StatsCardsClient({ selectedView = 'teaching' }) {
   const [stats, setStats] = useState({
@@ -101,6 +101,44 @@ export default function StatsCardsClient({ selectedView = 'teaching' }) {
     }
     setActivePanel(key)
     fetchList(key)
+  }
+
+  const deleteAllRejected = async () => {
+    if (!confirm('Are you sure you want to delete ALL rejected applications? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      setPanelLoading(true);
+      
+      // Build query to delete rejected applications based on current view
+      let query = supabase.from('faculty_applications').delete().eq('status', 'rejected');
+      
+      // Filter by teaching/non-teaching
+      if (selectedView === 'teaching') {
+        query = query.or('position.ilike.%professor%,position.eq.teaching');
+      } else {
+        query = query.not('position', 'ilike', '%professor%').neq('position', 'teaching');
+      }
+
+      const { error } = await query;
+      
+      if (error) throw error;
+
+      alert('All rejected applications have been deleted successfully!');
+      
+      // Refresh the list and stats
+      setPanelItems([]);
+      setActivePanel(null);
+      
+      // Trigger a re-fetch of stats by toggling selectedView
+      window.location.reload();
+    } catch (err) {
+      alert(`Error deleting applications: ${err.message}`);
+      console.error('Delete error:', err);
+    } finally {
+      setPanelLoading(false);
+    }
   }
 
   if (loading) return <div>Loading stats...</div>
@@ -203,12 +241,24 @@ export default function StatsCardsClient({ selectedView = 'teaching' }) {
                 {activePanel === 'shortlisted' && 'Applications • Shortlisted'}
                 {activePanel === 'rejected' && 'Applications • Rejected'}
               </h3>
-              <button
-                onClick={() => setActivePanel(null)}
-                className="text-xs text-gray-500 hover:text-gray-700"
-              >
-                Close
-              </button>
+              <div className="flex items-center gap-2">
+                {activePanel === 'rejected' && panelItems.length > 0 && (
+                  <button
+                    onClick={deleteAllRejected}
+                    className="flex items-center gap-1 px-3 py-1.5 text-xs text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors"
+                    title="Delete all rejected applications"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    Delete All
+                  </button>
+                )}
+                <button
+                  onClick={() => setActivePanel(null)}
+                  className="text-xs text-gray-500 hover:text-gray-700"
+                >
+                  Close
+                </button>
+              </div>
             </div>
 
             {panelLoading ? (
