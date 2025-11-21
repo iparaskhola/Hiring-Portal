@@ -48,6 +48,20 @@ const AllCandidates = () => {
   }, [selectedDepartment]); // Re-fetch when department filter changes
 
   const handleViewDetails = (candidate) => {
+    console.log('Candidate data:', candidate); // Debug: check what fields exist
+    
+    // If research data is in a JSON column, parse it and flatten it
+    if (candidate.researchInfo && typeof candidate.researchInfo === 'string') {
+      try {
+        const parsed = JSON.parse(candidate.researchInfo);
+        candidate = { ...candidate, ...parsed };
+      } catch (e) {
+        console.error('Failed to parse researchInfo:', e);
+      }
+    } else if (candidate.researchInfo && typeof candidate.researchInfo === 'object') {
+      candidate = { ...candidate, ...candidate.researchInfo };
+    }
+    
     setSelectedCandidate(candidate);
   };
 
