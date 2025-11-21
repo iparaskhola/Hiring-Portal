@@ -21,9 +21,21 @@ const AllCandidates = () => {
       try {
         setLoading(true);
         
-        // ⚡ OPTIMIZED: Use API client with retry & caching
-        const candidatesWithDetails = await candidatesApi.getAllDetailed(selectedDepartment);
-        setCandidates(candidatesWithDetails);
+        // Direct Supabase query to get ALL fields including research data
+        let query = supabase
+          .from('faculty_applications')
+          .select('*')
+          .order('created_at', { ascending: false });
+        
+        if (selectedDepartment !== 'All') {
+          query = query.eq('department', selectedDepartment);
+        }
+        
+        const { data, error } = await query;
+        
+        if (error) throw error;
+        
+        setCandidates(data || []);
       } catch (err) {
         console.error('Error fetching candidates:', err);
         setError(err.message);
