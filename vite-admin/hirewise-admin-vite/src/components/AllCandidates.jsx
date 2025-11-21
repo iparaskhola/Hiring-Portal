@@ -436,9 +436,9 @@ const AllCandidates = () => {
                     <ResponsiveContainer width="100%" height={180}>
                       <BarChart
                         data={[
-                          { name: 'Scopus', count: selectedCandidate.researchInfo?.scopus_general_papers || 0, fill: '#8b5cf6' },
-                          { name: 'Conference', count: selectedCandidate.researchInfo?.conference_papers || 0, fill: '#3b82f6' },
-                          { name: 'Books', count: selectedCandidate.researchInfo?.edited_books || 0, fill: '#10b981' }
+                          { name: 'Scopus', count: selectedCandidate.scopus_general_papers || 0, fill: '#8b5cf6' },
+                          { name: 'Conference', count: selectedCandidate.conference_papers || 0, fill: '#3b82f6' },
+                          { name: 'Books', count: selectedCandidate.edited_books || 0, fill: '#10b981' }
                         ]}
                       >
                         <CartesianGrid strokeDasharray="3 3" />
@@ -447,9 +447,9 @@ const AllCandidates = () => {
                         <Tooltip />
                         <Bar dataKey="count" radius={[8, 8, 0, 0]}>
                           {[
-                            { name: 'Scopus', count: selectedCandidate.researchInfo?.scopus_general_papers || 0, fill: '#8b5cf6' },
-                            { name: 'Conference', count: selectedCandidate.researchInfo?.conference_papers || 0, fill: '#3b82f6' },
-                            { name: 'Books', count: selectedCandidate.researchInfo?.edited_books || 0, fill: '#10b981' }
+                            { name: 'Scopus', count: selectedCandidate.scopus_general_papers || 0, fill: '#8b5cf6' },
+                            { name: 'Conference', count: selectedCandidate.conference_papers || 0, fill: '#3b82f6' },
+                            { name: 'Books', count: selectedCandidate.edited_books || 0, fill: '#10b981' }
                           ].map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.fill} />
                           ))}
