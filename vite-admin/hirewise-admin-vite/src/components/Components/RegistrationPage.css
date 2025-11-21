@@ -11,6 +11,42 @@
   --footer-bg: #1a2c47; /* Dark footer background */
 }
 
+/* Dark Mode Variables */
+.figma-bg.dark-mode {
+  --bg: #1a1a2e;
+  --card-bg: #16213e;
+  --text: #e4e4e4;
+  --muted: #b8b8b8;
+  --border: #2d3748;
+  --shadow: 0 15px 45px rgba(0,0,0,0.5);
+}
+
+.figma-bg.dark-mode .figma-left {
+  background-color: #0f3460 !important;
+  color: #e4e4e4;
+}
+
+.figma-bg.dark-mode .figma-heading,
+.figma-bg.dark-mode .figma-hirewise,
+.figma-bg.dark-mode .figma-desc {
+  color: #e4e4e4;
+}
+
+.figma-bg.dark-mode .figma-card {
+  background: #16213e;
+  color: #e4e4e4;
+}
+
+.figma-bg.dark-mode .figma-input {
+  background: #1a1a2e;
+  color: #e4e4e4;
+  border-color: #2d3748;
+}
+
+.figma-bg.dark-mode .figma-footer {
+  background: #0f0f23;
+}
+
 html, body {
   height: 100%;
   margin: 0;

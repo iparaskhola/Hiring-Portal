@@ -36,6 +36,7 @@ const RegistrationPage = ({ onRegistrationSuccess, onLoginSuccess }) => {
   const [generalFormError, setGeneralFormError] = useState(""); // For general form errors (string)
   const [showLogin, setShowLogin] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
   const navigate = useNavigate();
 
   // Validation
@@ -237,7 +238,34 @@ const RegistrationPage = ({ onRegistrationSuccess, onLoginSuccess }) => {
   };
 
   return (
-    <div className="figma-bg">
+    <div className={`figma-bg ${darkMode ? 'dark-mode' : ''}`}>
+      {/* Theme Toggle Button */}
+      <button 
+        onClick={() => setDarkMode(!darkMode)}
+        style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          width: '50px',
+          height: '50px',
+          borderRadius: '50%',
+          border: 'none',
+          background: darkMode ? '#fff' : '#1a2c47',
+          color: darkMode ? '#1a2c47' : '#fff',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '24px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          zIndex: 1000,
+          transition: 'all 0.3s ease'
+        }}
+        title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+      >
+        {darkMode ? '☀️' : '🌙'}
+      </button>
+      
       <div className="figma-container">
         {/* Left */}
         <div className="figma-left">
@@ -267,7 +295,6 @@ const RegistrationPage = ({ onRegistrationSuccess, onLoginSuccess }) => {
               <div className="figma-card-title">
                 <span className="figma-user-icon"><svg width="20" height="20" fill="none" viewBox="0 0 20 20"><circle cx="10" cy="10" r="10" fill="#0E76A8" /><path d="M10 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM6.5 15v-1a3.5 3.5 0 017 0v1" stroke="#fff" strokeWidth="1.2" strokeLinecap="round" /></svg></span>
                 Login
-                <span style={{fontSize: '10px', color: '#007bff'}}> v2</span>
               </div>
 
               <form className="figma-form" onSubmit={handleLoginSubmit} autoComplete="off">
