@@ -36,6 +36,9 @@ const AllCandidates = () => {
       
       if (error) throw error;
       
+      console.log('Fetched candidates (excluding rejected):', data?.length, 'records');
+      console.log('First few statuses:', data?.slice(0, 5).map(c => ({ id: c.id, name: c.first_name, status: c.status })));
+      
       setCandidates(data || []);
     } catch (err) {
       console.error('Error fetching candidates:', err);
