@@ -820,7 +820,7 @@ const EducationDetails = ({ formData, setFormData, onNext, onPrevious, onSaveExi
             id="masterYear"
             name="masterYear"
             value={formData.masterYear || ''}
-            min={formData.dateOfBirth ? new Date(formData.dateOfBirth).getFullYear() + 18 : 1950}
+            min={formData.bachelorYear || (formData.dateOfBirth ? new Date(formData.dateOfBirth).getFullYear() + 18 : 1950)}
             max={new Date().getFullYear()}
             onChange={handleInputChange}
           />
