@@ -1,10 +1,15 @@
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import "./RegistrationPage.css"; // Reuse the same CSS for consistent styling
+import { loginUser } from '../lib/auth';
 
-const LoginPage = ({ onBackToRegister }) => {
+const LoginPage = ({ onBackToRegister, onLoginSuccess }) => {
   const [form, setForm] = useState({ user: "", password: "" });
   const [touched, setTouched] = useState({});
   const [error, setError] = useState({});
+  const [loginError, setLoginError] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const navigate = useNavigate();
 
   const validate = {
     user: (v) =>
@@ -25,6 +30,7 @@ const LoginPage = ({ onBackToRegister }) => {
       ...prev,
       [name]: value && !validate[name](value) ? errorMsg[name] : "",
     }));
+    setLoginError(''); // Clear login error on input change
   };
 
   const isFormValid = (
@@ -32,14 +38,31 @@ const LoginPage = ({ onBackToRegister }) => {
     Object.keys(error).every((f) => !error[f])
   );
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isFormValid) {
-      console.log("Login Data:", form);
-      alert("Login successful! (Check console for data)");
-      setForm({ user: "", password: "" });
-      setTouched({});
-      setError({});
+    
+    // Prevent double-submit
+    if (isLoggingIn) return;
+    
+    setLoginError(''); // Clear any previous login error
+    setIsLoggingIn(true);
+    
+    try {
+      await loginUser({
+        username: form.user,
+        password: form.password
+      });
+      
+      // Navigate to application form on success
+      if (onLoginSuccess) {
+        onLoginSuccess();
+      } else {
+        navigate('/application');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      setLoginError(err.message || 'Invalid email/phone or password');
+      setIsLoggingIn(false);
     }
   };
 
@@ -59,7 +82,17 @@ const LoginPage = ({ onBackToRegister }) => {
         {/* Email or Phone */}
         <div className="figma-form-group">
           <div className={`figma-float-label ${form.user ? "filled" : ""}`}>
-            <input className="figma-input" type="text" name="user" id="user" value={form.user} onChange={handleChange} autoComplete="off" placeholder=" " />
+            <input 
+              className="figma-input" 
+              type="text" 
+              name="user" 
+              id="user" 
+              value={form.user} 
+              onChange={handleChange} 
+              autoComplete="off" 
+              placeholder=" "
+              disabled={isLoggingIn}
+            />
             <label htmlFor="user">Email or Phone</label>
           </div>
           <div className="figma-error">{touched.user && error.user}</div>
@@ -68,15 +101,54 @@ const LoginPage = ({ onBackToRegister }) => {
         {/* Password */}
         <div className="figma-form-group">
           <div className={`figma-float-label ${form.password ? "filled" : ""}`}>
-            <input className="figma-input" type="password" name="password" id="password" value={form.password} onChange={handleChange} autoComplete="off" placeholder=" " />
+            <input 
+              className="figma-input" 
+              type="password" 
+              name="password" 
+              id="password" 
+              value={form.password} 
+              onChange={handleChange} 
+              autoComplete="off" 
+              placeholder=" "
+              disabled={isLoggingIn}
+            />
             <label htmlFor="password">Password</label>
           </div>
           <div className="figma-error">{touched.password && error.password}</div>
         </div>
 
-        <button className="figma-apply-btn" type="submit" disabled={!isFormValid}>
-          <span className="figma-send-icon"><svg width="18" height="18" fill="none" viewBox="0 0 18 18"><path d="M3 15l12-6-12-6v5l8 1-8 1v5z" fill="#fff" /></svg></span>
-          LOGIN
+        {/* Login Error */}
+        {loginError && <div className="figma-error" style={{ marginBottom: '1rem' }}>{loginError}</div>}
+
+        <button 
+          className="figma-apply-btn" 
+          type="submit" 
+          disabled={!isFormValid || isLoggingIn}
+          style={{
+            cursor: isLoggingIn ? 'wait' : 'pointer',
+            opacity: isLoggingIn ? 0.7 : 1,
+          }}
+        >
+          {isLoggingIn ? (
+            <>
+              <span style={{
+                display: 'inline-block',
+                width: '14px',
+                height: '14px',
+                border: '2px solid #fff',
+                borderTopColor: 'transparent',
+                borderRadius: '50%',
+                animation: 'spin 0.6s linear infinite',
+                marginRight: '8px'
+              }}></span>
+              Logging in...
+            </>
+          ) : (
+            <>
+              <span className="figma-send-icon"><svg width="18" height="18" fill="none" viewBox="0 0 18 18"><path d="M3 15l12-6-12-6v5l8 1-8 1v5z" fill="#fff" /></svg></span>
+              LOGIN
+            </>
+          )}
         </button>
       </form>
     </>

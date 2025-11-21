@@ -238,10 +238,10 @@ body {
 .figma-input {
   width: 100%;
   padding: 16px 18px; /* Increased padding */
-  border: 1.5px solid #d3dce6; /* Softer border */
+  border: 2px solid #9ca3af; /* Darker, more visible border */
   border-radius: 12px; /* More rounded */
   font-size: 1.05rem; /* Slightly larger font */
-  background: #fcfdfe; /* Lighter background */
+  background: #ffffff; /* Pure white background */
   color: var(--text);
   outline: none;
   transition: border 0.3s, background 0.3s, box-shadow 0.3s;
