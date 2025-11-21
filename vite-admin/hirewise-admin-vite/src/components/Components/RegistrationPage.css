@@ -43,6 +43,12 @@
   border-color: #2d3748;
 }
 
+.figma-bg.dark-mode .figma-country-select {
+  background: #1a1a2e !important;
+  color: #e4e4e4 !important;
+  border-color: #2d3748 !important;
+}
+
 .figma-bg.dark-mode .figma-footer {
   background: #0f0f23;
 }
