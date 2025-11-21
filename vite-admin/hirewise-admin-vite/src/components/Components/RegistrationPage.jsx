@@ -271,17 +271,33 @@ const RegistrationPage = ({ onRegistrationSuccess, onLoginSuccess }) => {
 
               <form className="figma-form" onSubmit={handleLoginSubmit} autoComplete="off">
                 <div className="figma-form-group">
-                  <div className={`figma-float-label ${loginUsername ? "filled" : ""}`}>
-                    <input className="figma-input" type="text" name="loginUsername" id="loginUsername" value={loginUsername} onChange={(e) => setLoginUsername(e.target.value)} required autoComplete="off" placeholder=" " />
-                    <label htmlFor="loginUsername">Email</label>
-                  </div>
+                  <input 
+                    className="figma-input" 
+                    type="text" 
+                    name="loginUsername" 
+                    id="loginUsername" 
+                    value={loginUsername} 
+                    onChange={(e) => setLoginUsername(e.target.value)} 
+                    required 
+                    autoComplete="off" 
+                    placeholder="Email Address"
+                    style={{ fontSize: '1rem', padding: '14px 16px' }}
+                  />
                 </div>
 
                 <div className="figma-form-group">
-                  <div className={`figma-float-label ${loginPassword ? "filled" : ""}`}>
-                    <input className="figma-input" type="password" name="loginPassword" id="loginPassword" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} required autoComplete="off" placeholder=" " />
-                    <label htmlFor="loginPassword">Password</label>
-                  </div>
+                  <input 
+                    className="figma-input" 
+                    type="password" 
+                    name="loginPassword" 
+                    id="loginPassword" 
+                    value={loginPassword} 
+                    onChange={(e) => setLoginPassword(e.target.value)} 
+                    required 
+                    autoComplete="off" 
+                    placeholder="Password"
+                    style={{ fontSize: '1rem', padding: '14px 16px' }}
+                  />
                 </div>
                 {loginError && <div className="figma-error">{loginError}</div>}
                 <button 
