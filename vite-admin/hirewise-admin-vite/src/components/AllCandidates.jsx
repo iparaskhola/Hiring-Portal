@@ -13,8 +13,16 @@ const AllCandidates = () => {
   const [uploading, setUploading] = useState(false);
   const [files, setFiles] = useState({});
   const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [showAssignModal, setShowAssignModal] = useState(false);
+  const [candidateToAssign, setCandidateToAssign] = useState(null);
+  const [selectedFaculty, setSelectedFaculty] = useState([]);
 
   const departments = ['All', 'law', 'liberal', 'engineering', 'management'];
+  
+  const facultyMembers = [
+    { id: 1, name: 'Kiran Sharma', email: 'kiran.sharma@university.edu' },
+    { id: 2, name: 'Ziya Khan', email: 'ziya.khan@university.edu' }
+  ];
 
   const fetchCandidates = async () => {
     try {
@@ -249,12 +257,22 @@ const AllCandidates = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex-shrink-0">
+                  <div className="flex-shrink-0 flex space-x-2">
                     <button
                       onClick={() => handleViewDetails(candidate)}
                       className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
                     >
                       View Details
+                    </button>
+                    <button
+                      onClick={() => {
+                        setCandidateToAssign(candidate);
+                        setShowAssignModal(true);
+                        setSelectedFaculty([]);
+                      }}
+                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
+                    >
+                      Assign Faculty
                     </button>
                   </div>
                 </div>
@@ -267,6 +285,93 @@ const AllCandidates = () => {
           )}
         </div>
       </div>
+
+      {showAssignModal && candidateToAssign && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-gray-900">Assign Faculty</h3>
+              <button
+                onClick={() => {
+                  setShowAssignModal(false);
+                  setCandidateToAssign(null);
+                  setSelectedFaculty([]);
+                }}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="mb-4">
+              <p className="text-sm text-gray-600 mb-2">
+                Assigning faculty to review: <span className="font-semibold">{candidateToAssign.first_name} {candidateToAssign.last_name}</span>
+              </p>
+            </div>
+
+            <div className="space-y-3 mb-6">
+              <p className="text-sm font-medium text-gray-700">Select Faculty Members:</p>
+              {facultyMembers.map((faculty) => (
+                <label
+                  key={faculty.id}
+                  className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedFaculty.includes(faculty.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedFaculty([...selectedFaculty, faculty.id]);
+                      } else {
+                        setSelectedFaculty(selectedFaculty.filter(id => id !== faculty.id));
+                      }
+                    }}
+                    className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                  />
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-gray-900">{faculty.name}</p>
+                    <p className="text-xs text-gray-500">{faculty.email}</p>
+                  </div>
+                </label>
+              ))}
+            </div>
+
+            <div className="flex space-x-3">
+              <button
+                onClick={() => {
+                  if (selectedFaculty.length > 0) {
+                    const selectedNames = facultyMembers
+                      .filter(f => selectedFaculty.includes(f.id))
+                      .map(f => f.name)
+                      .join(', ');
+                    alert(`Assigned ${candidateToAssign.first_name} ${candidateToAssign.last_name} to: ${selectedNames}`);
+                    setShowAssignModal(false);
+                    setCandidateToAssign(null);
+                    setSelectedFaculty([]);
+                  } else {
+                    alert('Please select at least one faculty member');
+                  }
+                }}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors font-medium"
+              >
+                Assign Selected
+              </button>
+              <button
+                onClick={() => {
+                  setShowAssignModal(false);
+                  setCandidateToAssign(null);
+                  setSelectedFaculty([]);
+                }}
+                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors font-medium"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {selectedCandidate && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
