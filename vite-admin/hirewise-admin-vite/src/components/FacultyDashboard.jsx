@@ -273,43 +273,39 @@ const FacultyDashboard = () => {
                   {/* Basic Info */}
                   <div className="bg-white border rounded-lg p-4 shadow-sm">
                     <h3 className="text-lg font-bold text-gray-900 mb-3 border-b pb-2">Basic Information</h3>
-                    <div className="space-y-2">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <p className="text-xs font-semibold text-gray-500 uppercase">Email</p>
-                          <p className="text-sm text-gray-900">{selectedCandidate.email}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs font-semibold text-gray-500 uppercase">Phone</p>
-                          <p className="text-sm text-gray-900">{selectedCandidate.phone}</p>
-                        </div>
+                    <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+                      <div>
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Email</p>
+                        <p className="text-sm text-gray-900">{selectedCandidate.email}</p>
                       </div>
-                      {selectedCandidate.address && (
+                      <div>
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Phone</p>
+                        <p className="text-sm text-gray-900">{selectedCandidate.phone}</p>
+                      </div>
+                      {selectedCandidate.gender && (
                         <div>
+                          <p className="text-xs font-semibold text-gray-500 uppercase">Gender</p>
+                          <p className="text-sm text-gray-900">{selectedCandidate.gender}</p>
+                        </div>
+                      )}
+                      {selectedCandidate.date_of_birth && (
+                        <div>
+                          <p className="text-xs font-semibold text-gray-500 uppercase">Date of Birth</p>
+                          <p className="text-sm text-gray-900">{new Date(selectedCandidate.date_of_birth).toLocaleDateString()}</p>
+                        </div>
+                      )}
+                      {selectedCandidate.nationality && (
+                        <div>
+                          <p className="text-xs font-semibold text-gray-500 uppercase">Nationality</p>
+                          <p className="text-sm text-gray-900">{selectedCandidate.nationality}</p>
+                        </div>
+                      )}
+                      {selectedCandidate.address && (
+                        <div className="col-span-2">
                           <p className="text-xs font-semibold text-gray-500 uppercase">Address</p>
                           <p className="text-sm text-gray-900">{selectedCandidate.address}</p>
                         </div>
                       )}
-                      <div className="grid grid-cols-3 gap-4">
-                        {selectedCandidate.gender && (
-                          <div>
-                            <p className="text-xs font-semibold text-gray-500 uppercase">Gender</p>
-                            <p className="text-sm text-gray-900">{selectedCandidate.gender}</p>
-                          </div>
-                        )}
-                        {selectedCandidate.date_of_birth && (
-                          <div>
-                            <p className="text-xs font-semibold text-gray-500 uppercase">Date of Birth</p>
-                            <p className="text-sm text-gray-900">{new Date(selectedCandidate.date_of_birth).toLocaleDateString()}</p>
-                          </div>
-                        )}
-                        {selectedCandidate.nationality && (
-                          <div>
-                            <p className="text-xs font-semibold text-gray-500 uppercase">Nationality</p>
-                            <p className="text-sm text-gray-900">{selectedCandidate.nationality}</p>
-                          </div>
-                        )}
-                      </div>
                     </div>
                   </div>
 
