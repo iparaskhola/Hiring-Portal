@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { supabase } from '../../lib/supabase-client';
+import { candidatesApi } from '../lib/api';
 
 const FacultyDashboard = () => {
   const location = useLocation();
@@ -32,19 +32,22 @@ const FacultyDashboard = () => {
           return;
         }
         
-        // Fetch actual candidate data from Supabase
-        const { data, error } = await supabase
-          .from('faculty_applications')
-          .select('*')
-          .in('id', assignedCandidateIds);
+        // Fetch complete candidate data using the API (includes research_info)
+        const candidatesWithFullData = await Promise.all(
+          assignedCandidateIds.map(async (id) => {
+            try {
+              const data = await candidatesApi.getById(id);
+              return data;
+            } catch (error) {
+              console.error(`Error fetching candidate ${id}:`, error);
+              return null;
+            }
+          })
+        );
         
-        if (error) {
-          console.error('Error fetching candidates:', error);
-          setAssignedCandidates([]);
-        } else {
-          setAssignedCandidates(data || []);
-        }
-        
+        // Filter out any failed fetches
+        const validCandidates = candidatesWithFullData.filter(c => c !== null);
+        setAssignedCandidates(validCandidates);
         setLoading(false);
       } catch (err) {
         console.error('Error in fetchAssignedCandidates:', err);
@@ -61,6 +64,15 @@ const FacultyDashboard = () => {
   }, [facultyInfo.id]);
 
   const handleViewDetails = (candidate) => {
+    // Flatten research_info if it exists as nested object
+    if (candidate.research_info && typeof candidate.research_info === 'object') {
+      candidate = {
+        ...candidate,
+        scopus_general_papers: candidate.research_info.scopus_general_papers,
+        conference_papers: candidate.research_info.conference_papers,
+        edited_books: candidate.research_info.edited_books,
+      };
+    }
     setSelectedCandidate(candidate);
   };
 
