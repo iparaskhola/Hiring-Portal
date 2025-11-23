@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase-client';
-import { candidatesApi } from '../lib/api';
+import { candidatesApi } from '../../lib/api';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const AllCandidates = () => {
@@ -59,37 +59,27 @@ const AllCandidates = () => {
     fetchCandidates();
   }, [selectedDepartment]); // Re-fetch when department filter changes
 
-  const handleViewDetails = (candidate) => {
-    console.log('Candidate data:', candidate); // Debug: check what fields exist
-    console.log('Research fields check:', {
-      scopus_general_papers: candidate.scopus_general_papers,
-      conference_papers: candidate.conference_papers,
-      edited_books: candidate.edited_books,
-      researchInfo: candidate.researchInfo,
-      research_info: candidate.research_info
-    });
+  const handleViewDetails = async (candidate) => {
+    console.log('Opening candidate details for ID:', candidate.id);
     
-    // Try multiple possible field names for research data
-    let enriched = { ...candidate };
+    // Show modal immediately with loading state
+    setSelectedCandidate({ ...candidate, loading: true });
     
-    // Check if data is in researchInfo JSON column
-    if (candidate.researchInfo) {
-      const info = typeof candidate.researchInfo === 'string' 
-        ? JSON.parse(candidate.researchInfo) 
-        : candidate.researchInfo;
-      enriched = { ...enriched, ...info };
+    try {
+      // Fetch complete application details from API
+      const fullData = await candidatesApi.getById(candidate.id);
+      console.log('Full candidate data fetched:', fullData);
+      
+      setSelectedCandidate({ 
+        ...candidate, 
+        ...fullData,
+        loading: false 
+      });
+    } catch (error) {
+      console.error('Error fetching candidate details:', error);
+      // Fallback to existing data if fetch fails
+      setSelectedCandidate({ ...candidate, loading: false });
     }
-    
-    // Check if data is in research_info JSON column (snake_case)
-    if (candidate.research_info) {
-      const info = typeof candidate.research_info === 'string' 
-        ? JSON.parse(candidate.research_info) 
-        : candidate.research_info;
-      enriched = { ...enriched, ...info };
-    }
-    
-    console.log('Enriched candidate:', enriched);
-    setSelectedCandidate(enriched);
   };
 
   const closeModal = () => {
@@ -295,6 +285,14 @@ const AllCandidates = () => {
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto">
+              {selectedCandidate.loading ? (
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                    <p className="text-gray-600">Loading candidate details...</p>
+                  </div>
+                </div>
+              ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
                 {/* Left Side - Detailed Information */}
                 <div className="space-y-4">
@@ -610,6 +608,7 @@ const AllCandidates = () => {
                   </div>
                 </div>
               </div>
+              )}
             </div>
 
             {/* Footer */}
