@@ -695,9 +695,12 @@ const EducationDetails = ({ formData, setFormData, onNext, onPrevious, onSaveExi
             min={formData.dateOfBirth ? new Date(formData.dateOfBirth).getFullYear() + 18 : 1950}
             max={new Date().getFullYear()}
             onChange={handleInputChange}
+            style={{ width: '150px', maxWidth: '150px' }}
           />
           {errors.bachelorYear && <span className="error">{errors.bachelorYear}</span>}
         </div>
+      </div>
+      <div className="form-fields-row">
         <div className="form-field">
           <label htmlFor="bachelorCgpaScale">Grading Scale*</label>
           <select
@@ -825,9 +828,12 @@ const EducationDetails = ({ formData, setFormData, onNext, onPrevious, onSaveExi
             min={formData.bachelorYear || (formData.dateOfBirth ? new Date(formData.dateOfBirth).getFullYear() + 18 : 1950)}
             max={new Date().getFullYear()}
             onChange={handleInputChange}
+            style={{ width: '150px', maxWidth: '150px' }}
           />
           {errors.masterYear && <span className="error">{errors.masterYear}</span>}
         </div>
+      </div>
+      <div className="form-fields-row">
         <div className="form-field">
           <label htmlFor="masterCgpaScale">Grading Scale*</label>
           <select
