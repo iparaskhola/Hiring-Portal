@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { supabase } from '../../lib/supabase-client';
 
 const FacultyDashboard = () => {
   const location = useLocation();
@@ -9,44 +10,55 @@ const FacultyDashboard = () => {
 
   const facultyInfo = location.state?.facultyInfo || JSON.parse(localStorage.getItem('facultyInfo') || '{}');
 
-  // Mock assigned candidates data - in real app, this would come from API
-  const allCandidatesData = {
-    1: {
-      id: 1,
-      first_name: 'Bottle',
-      last_name: 'Test',
-      email: 'bottle@gmail.com',
-      position: 'Teaching',
-      department: 'Management',
-      experience: '5 years',
-      publications: 11,
-      scopus_general_papers: 5,
-      conference_papers: 5,
-      edited_books: 6,
-      status: 'pending'
-    }
-  };
-
   useEffect(() => {
-    // Simulate loading and fetch assignments from localStorage
-    setTimeout(() => {
-      const facultyAssignments = JSON.parse(localStorage.getItem('facultyAssignments') || '{}');
-      
-      // Find candidates assigned to this faculty
-      const assigned = [];
-      for (const [candidateId, facultyIds] of Object.entries(facultyAssignments)) {
-        if (facultyIds.includes(facultyInfo.id)) {
-          const candidate = allCandidatesData[candidateId];
-          if (candidate) {
-            assigned.push(candidate);
+    const fetchAssignedCandidates = async () => {
+      try {
+        setLoading(true);
+        
+        // Get assignments from localStorage
+        const facultyAssignments = JSON.parse(localStorage.getItem('facultyAssignments') || '{}');
+        
+        // Find candidate IDs assigned to this faculty
+        const assignedCandidateIds = [];
+        for (const [candidateId, facultyIds] of Object.entries(facultyAssignments)) {
+          if (facultyIds.includes(facultyInfo.id)) {
+            assignedCandidateIds.push(candidateId);
           }
         }
+        
+        if (assignedCandidateIds.length === 0) {
+          setAssignedCandidates([]);
+          setLoading(false);
+          return;
+        }
+        
+        // Fetch actual candidate data from Supabase
+        const { data, error } = await supabase
+          .from('faculty_applications')
+          .select('*')
+          .in('id', assignedCandidateIds);
+        
+        if (error) {
+          console.error('Error fetching candidates:', error);
+          setAssignedCandidates([]);
+        } else {
+          setAssignedCandidates(data || []);
+        }
+        
+        setLoading(false);
+      } catch (err) {
+        console.error('Error in fetchAssignedCandidates:', err);
+        setAssignedCandidates([]);
+        setLoading(false);
       }
-      
-      setAssignedCandidates(assigned);
+    };
+    
+    if (facultyInfo.id) {
+      fetchAssignedCandidates();
+    } else {
       setLoading(false);
-    }, 500);
-  }, [facultyInfo.email, facultyInfo.id]);
+    }
+  }, [facultyInfo.id]);
 
   const handleViewDetails = (candidate) => {
     setSelectedCandidate(candidate);
