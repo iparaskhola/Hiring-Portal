@@ -10,6 +10,7 @@ const FacultyDashboard = () => {
   const [candidates, setCandidates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
 
   const facultyInfo = location.state?.facultyInfo || JSON.parse(localStorage.getItem('facultyInfo') || '{}');
 
@@ -102,8 +103,33 @@ const FacultyDashboard = () => {
 
   const closeModal = () => {
     setSelectedCandidate(null);
-    setShowUpload(false);
-    setFiles({});
+  };
+
+  // Update application status: 'shortlisted' or 'rejected'
+  const updateApplicationStatus = async (nextStatus) => {
+    if (!selectedCandidate?.id) return;
+    try {
+      setUpdatingStatus(true);
+      const { error: updErr } = await supabase
+        .from('faculty_applications')
+        .update({ status: nextStatus })
+        .eq('id', selectedCandidate.id);
+      if (updErr) throw updErr;
+
+      // Close modal first
+      closeModal();
+      
+      // Remove from local state since faculty only sees assigned candidates
+      setCandidates(prev => prev.filter(c => c.id !== selectedCandidate.id));
+      
+      alert(`Application ${nextStatus === 'shortlisted' ? 'shortlisted' : 'rejected'} successfully!`);
+      
+    } catch (e) {
+      console.error('Status update failed:', e);
+      alert(e.message || 'Failed to update status');
+    } finally {
+      setUpdatingStatus(false);
+    }
   };
   const onFileChange = (e, key) => {
     const f = e.target.files?.[0];
@@ -552,14 +578,37 @@ const FacultyDashboard = () => {
                   {/* Status Update Section */}
                   <div className="bg-white border rounded-lg p-4 shadow-sm">
                     <h3 className="text-sm font-bold text-gray-900 mb-3">Application Status</h3>
-                    <div className="flex items-center space-x-2">
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        selectedCandidate.status === 'shortlisted' ? 'bg-green-100 text-green-700' :
-                        selectedCandidate.status === 'rejected' ? 'bg-red-100 text-red-700' :
-                        'bg-yellow-100 text-yellow-700'
-                      }`}>
-                        {selectedCandidate.status === 'in_review' ? 'in_review' : selectedCandidate.status || 'in_review'}
-                      </span>
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-2">
+                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                          selectedCandidate.status === 'shortlisted' ? 'bg-green-100 text-green-700' :
+                          selectedCandidate.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                          'bg-yellow-100 text-yellow-700'
+                        }`}>
+                          {selectedCandidate.status === 'in_review' ? 'In Review' : 
+                           selectedCandidate.status === 'shortlisted' ? 'Shortlisted' :
+                           selectedCandidate.status === 'rejected' ? 'Rejected' :
+                           selectedCandidate.status || 'In Review'}
+                        </span>
+                      </div>
+                      
+                      {/* Action Buttons */}
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => updateApplicationStatus('shortlisted')}
+                          disabled={updatingStatus || selectedCandidate.status === 'shortlisted'}
+                          className="flex-1 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium text-sm"
+                        >
+                          {updatingStatus ? 'Updating...' : 'Shortlist'}
+                        </button>
+                        <button
+                          onClick={() => updateApplicationStatus('rejected')}
+                          disabled={updatingStatus || selectedCandidate.status === 'rejected'}
+                          className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium text-sm"
+                        >
+                          {updatingStatus ? 'Updating...' : 'Reject'}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
