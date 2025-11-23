@@ -87,6 +87,7 @@ const FacultyDashboard = () => {
         scopus_id: fullData.researchInfo?.scopus_id || fullData.scopus_id,
         orchid_id: fullData.researchInfo?.orchid_id || fullData.orchid_id,
         google_scholar_id: fullData.researchInfo?.google_scholar_id,
+        experience: fullData.total_experience || 'N/A',
         loading: false
       };
       
