@@ -21,11 +21,11 @@ const AllCandidates = () => {
       setLoading(true);
       
       // Direct Supabase query to get ALL fields including research data
-      // Exclude rejected applications from the list
+      // Exclude rejected and deleted applications from the list
       let query = supabase
         .from('faculty_applications')
         .select('*')
-        .neq('status', 'rejected')
+        .not('status', 'in', '(rejected,deleted)')
         .order('created_at', { ascending: false });
       
       if (selectedDepartment !== 'All') {
@@ -140,11 +140,22 @@ const AllCandidates = () => {
       // Close modal first
       closeModal();
       
-      // Show success message
-      alert(nextStatus === 'rejected' ? 'Application moved to Rejected.' : 'Application moved to Waiting (In Review).');
+      // Immediately remove from local state if rejected or deleted
+      if (nextStatus === 'rejected' || nextStatus === 'deleted') {
+        setCandidates(prev => prev.filter(c => c.id !== selectedCandidate.id));
+        alert(`Application ${nextStatus} and removed from list.`);
+      } else {
+        // Update status in local state
+        setCandidates(prev => prev.map(c => 
+          c.id === selectedCandidate.id ? { ...c, status: nextStatus } : c
+        ));
+        alert('Application moved to Waiting (In Review).');
+      }
       
-      // Refetch candidates to ensure data is synchronized
-      await fetchCandidates();
+      // Force a full refetch to ensure sync
+      setTimeout(() => {
+        fetchCandidates();
+      }, 500);
     } catch (e) {
       console.error('Status update failed:', e);
       alert(e.message || 'Failed to update status');
