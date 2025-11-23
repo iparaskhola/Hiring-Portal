@@ -21,11 +21,9 @@ const AllCandidates = () => {
       setLoading(true);
       
       // Direct Supabase query to get ALL fields including research data
-      // Exclude rejected and deleted applications from the list
       let query = supabase
         .from('faculty_applications')
         .select('*')
-        .not('status', 'in', '(rejected,deleted)')
         .order('created_at', { ascending: false });
       
       if (selectedDepartment !== 'All') {
@@ -36,10 +34,18 @@ const AllCandidates = () => {
       
       if (error) throw error;
       
-      console.log('Fetched candidates (excluding rejected):', data?.length, 'records');
-      console.log('First few statuses:', data?.slice(0, 5).map(c => ({ id: c.id, name: c.first_name, status: c.status })));
+      // Filter out rejected and deleted candidates in JavaScript
+      const filteredData = (data || []).filter(candidate => 
+        candidate.status !== 'rejected' && 
+        candidate.status !== 'deleted' &&
+        candidate.status !== 'Deleted'
+      );
       
-      setCandidates(data || []);
+      console.log('Fetched candidates:', data?.length, 'total, filtered to:', filteredData.length);
+      console.log('All statuses in DB:', [...new Set(data?.map(c => c.status))]);
+      console.log('First few candidates:', filteredData.slice(0, 5).map(c => ({ id: c.id, name: c.first_name, status: c.status })));
+      
+      setCandidates(filteredData);
     } catch (err) {
       console.error('Error fetching candidates:', err);
       setError(err.message);
