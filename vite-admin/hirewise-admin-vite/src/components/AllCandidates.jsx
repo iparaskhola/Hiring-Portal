@@ -70,11 +70,22 @@ const AllCandidates = () => {
       const fullData = await candidatesApi.getById(candidate.id);
       console.log('Full candidate data fetched:', fullData);
       
-      setSelectedCandidate({ 
-        ...candidate, 
+      // Flatten researchInfo fields to top level
+      const flattened = {
+        ...candidate,
         ...fullData,
-        loading: false 
-      });
+        // Extract research info fields to top level
+        scopus_general_papers: fullData.researchInfo?.scopus_general_papers || 0,
+        conference_papers: fullData.researchInfo?.conference_papers || 0,
+        edited_books: fullData.researchInfo?.edited_books || 0,
+        scopus_id: fullData.researchInfo?.scopus_id || fullData.scopus_id,
+        orchid_id: fullData.researchInfo?.orchid_id || fullData.orchid_id,
+        google_scholar_id: fullData.researchInfo?.google_scholar_id,
+        loading: false
+      };
+      
+      console.log('Flattened candidate data:', flattened);
+      setSelectedCandidate(flattened);
     } catch (error) {
       console.error('Error fetching candidate details:', error);
       // Fallback to existing data if fetch fails
