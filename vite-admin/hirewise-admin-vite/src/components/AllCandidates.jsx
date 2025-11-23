@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabase-client';
-import { candidatesApi } from '../../lib/api';
+import { supabase } from '../lib/supabase-client';
+import { candidatesApi } from '../lib/api';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const AllCandidates = () => {
