@@ -9,34 +9,44 @@ const FacultyDashboard = () => {
 
   const facultyInfo = location.state?.facultyInfo || JSON.parse(localStorage.getItem('facultyInfo') || '{}');
 
-  // Mock assigned candidates data
-  const mockAssignments = {
-    'kiran.sharma@bmu.edu.in': [
-      {
-        id: 1,
-        first_name: 'Bottle',
-        last_name: 'Test',
-        email: 'bottle@gmail.com',
-        position: 'Teaching',
-        department: 'Management',
-        experience: '5 years',
-        publications: 11,
-        scopus_general_papers: 5,
-        conference_papers: 5,
-        edited_books: 6,
-        status: 'pending'
-      }
-    ],
-    'ziya.khan@bmu.edu.in': []
+  // Mock assigned candidates data - in real app, this would come from API
+  const allCandidatesData = {
+    1: {
+      id: 1,
+      first_name: 'Bottle',
+      last_name: 'Test',
+      email: 'bottle@gmail.com',
+      position: 'Teaching',
+      department: 'Management',
+      experience: '5 years',
+      publications: 11,
+      scopus_general_papers: 5,
+      conference_papers: 5,
+      edited_books: 6,
+      status: 'pending'
+    }
   };
 
   useEffect(() => {
-    // Simulate loading
+    // Simulate loading and fetch assignments from localStorage
     setTimeout(() => {
-      setAssignedCandidates(mockAssignments[facultyInfo.email?.toLowerCase()] || []);
+      const facultyAssignments = JSON.parse(localStorage.getItem('facultyAssignments') || '{}');
+      
+      // Find candidates assigned to this faculty
+      const assigned = [];
+      for (const [candidateId, facultyIds] of Object.entries(facultyAssignments)) {
+        if (facultyIds.includes(facultyInfo.id)) {
+          const candidate = allCandidatesData[candidateId];
+          if (candidate) {
+            assigned.push(candidate);
+          }
+        }
+      }
+      
+      setAssignedCandidates(assigned);
       setLoading(false);
     }, 500);
-  }, [facultyInfo.email]);
+  }, [facultyInfo.email, facultyInfo.id]);
 
   const handleViewDetails = (candidate) => {
     setSelectedCandidate(candidate);

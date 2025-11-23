@@ -16,7 +16,11 @@ const AllCandidates = () => {
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [candidateToAssign, setCandidateToAssign] = useState(null);
   const [selectedFaculty, setSelectedFaculty] = useState([]);
-  const [assignments, setAssignments] = useState({});
+  const [assignments, setAssignments] = useState(() => {
+    // Load assignments from localStorage on mount
+    const saved = localStorage.getItem('facultyAssignments');
+    return saved ? JSON.parse(saved) : {};
+  });
 
   const departments = ['All', 'law', 'liberal', 'engineering', 'management'];
   
@@ -364,10 +368,14 @@ const AllCandidates = () => {
                       .join(', ');
                     
                     // Save assignment
-                    setAssignments({
+                    const newAssignments = {
                       ...assignments,
                       [candidateToAssign.id]: selectedFaculty
-                    });
+                    };
+                    setAssignments(newAssignments);
+                    
+                    // Persist to localStorage
+                    localStorage.setItem('facultyAssignments', JSON.stringify(newAssignments));
                     
                     alert(`Assigned ${candidateToAssign.first_name} ${candidateToAssign.last_name} to: ${selectedNames}`);
                     setShowAssignModal(false);
