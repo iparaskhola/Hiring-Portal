@@ -247,6 +247,7 @@ const PersonalInformation = ({ formData, setFormData, onNext, onPrevious, onSave
 
   const validateForm = () => {
     const newErrors = {};
+    if (!formData.title) newErrors.title = 'Title is required';
     if (!formData.firstName) newErrors.firstName = 'First name is required';
     // Last name is optional
     if (!formData.email) newErrors.email = 'Email is required';
@@ -283,6 +284,22 @@ const PersonalInformation = ({ formData, setFormData, onNext, onPrevious, onSave
   return (
     <form onSubmit={handleSubmit}>
       <div className="form-fields-row">
+        <div className="form-field" style={{ flex: '0 0 auto', width: '120px' }}>
+          <label htmlFor="title">Title*</label>
+          <select
+            id="title"
+            value={formData.title || ''}
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+          >
+            <option value="">Select</option>
+            <option value="Mr">Mr</option>
+            <option value="Mrs">Mrs</option>
+            <option value="Miss">Miss</option>
+            <option value="Dr">Dr</option>
+            <option value="Prof">Prof</option>
+          </select>
+          {errors.title && <span className="error">{errors.title}</span>}
+        </div>
         <div className="form-field">
           <label htmlFor="firstName">First Name*</label>
           <input
