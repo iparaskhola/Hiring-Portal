@@ -126,7 +126,13 @@ const AdminLayout = () => {
             </div>
             
             <div className="flex items-center space-x-4">
-              {/* Notification bell removed */}
+              <div 
+                className="relative cursor-pointer"
+                onClick={() => navigate('/admin/notifications')}
+              >
+                <Bell className="h-6 w-6 text-gray-600 hover:text-gray-900 transition-colors duration-200" />
+                <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full flex items-center justify-center text-white text-xs">0</span>
+              </div>
               
               {/* User Menu Dropdown */}
               <div className="relative">
