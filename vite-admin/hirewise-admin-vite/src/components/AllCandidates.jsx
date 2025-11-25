@@ -266,17 +266,17 @@ const AllCandidates = () => {
         <div className="divide-y divide-gray-200">
           {filteredCandidates.length > 0 ? (
             filteredCandidates.map((candidate, index) => (
-              <div key={candidate.id} className="p-6 hover:bg-gray-50 transition-colors">
+              <div key={candidate.id} className="p-4 hover:bg-gray-50 transition-colors">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
                     <div className="flex-shrink-0">
-                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                        <span className="text-lg font-semibold text-blue-600">#{index + 1}</span>
+                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <span className="text-base font-semibold text-blue-600">#{index + 1}</span>
                       </div>
                     </div>
                     <div className="flex-1">
-                      <div className="mb-2">
-                        <h3 className="text-lg font-semibold text-gray-900">
+                      <div className="mb-1">
+                        <h3 className="text-base font-semibold text-gray-900">
                           {candidate.first_name} {candidate.last_name}
                         </h3>
                         <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
@@ -285,7 +285,7 @@ const AllCandidates = () => {
                       </div>
                       <p className="text-sm text-gray-600 mb-1">{candidate.position}</p>
                       <p className="text-sm text-gray-500">{candidate.email}</p>
-                      <div className="flex items-center space-x-4 mt-2">
+                      <div className="flex items-center space-x-4 mt-1">
                         <span className="text-sm text-gray-600">{candidate.experience}</span>
                         <span className="text-sm text-gray-600">{candidate.publications} publications</span>
                       </div>
@@ -294,14 +294,14 @@ const AllCandidates = () => {
                   <div className="flex-shrink-0 flex space-x-2">
                     <button
                       onClick={() => handleViewDetails(candidate)}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors text-sm"
                     >
                       View Details
                     </button>
                     {assignments[candidate.id] ? (
                       <button
                         disabled
-                        className="bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed"
+                        className="bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed text-sm"
                       >
                         Assigned
                       </button>
@@ -312,7 +312,7 @@ const AllCandidates = () => {
                           setShowAssignModal(true);
                           setSelectedFaculty(null);
                         }}
-                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
+                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors text-sm"
                       >
                         Assign Faculty
                       </button>
