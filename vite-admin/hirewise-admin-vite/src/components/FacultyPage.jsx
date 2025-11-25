@@ -28,8 +28,8 @@ const FacultyPage = () => {
         console.error('Error loading faculty members:', error);
         // Fallback to default
         setFacultyMembers([
-          { id: 1, name: 'Kiran Sharma', email: 'kiran.sharma@bmu.edu.in' },
-          { id: 2, name: 'Ziya Khan', email: 'ziya.uddin@bmu.edu.in' }
+          { id: 1, name: 'Dr. Kiran Sharma', email: 'kiran.sharma@bmu.edu.in' },
+          { id: 2, name: 'Dr. Ziya Khan', email: 'ziya.uddin@bmu.edu.in' }
         ]);
       }
     };
