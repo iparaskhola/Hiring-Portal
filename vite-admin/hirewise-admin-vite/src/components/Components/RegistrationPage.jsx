@@ -490,17 +490,6 @@ const RegistrationPage = ({ onRegistrationSuccess, onLoginSuccess }) => {
                     LOGIN
                   </button>
                 </p>
-                <p className="auth-link" style={{ marginTop: '10px' }}>
-                  Are you a faculty reviewer?
-                  <button 
-                    className="figma-login-btn-inline" 
-                    type="button" 
-                    onClick={() => navigate('/faculty')}
-                    style={{ color: '#0E76A8' }}
-                  >
-                    FACULTY PORTAL
-                  </button>
-                </p>
               </form>
             </div>
           )}
