@@ -10,6 +10,7 @@ const FacultyDashboard = () => {
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [evaluationCandidate, setEvaluationCandidate] = useState(null);
   const [evaluationScores, setEvaluationScores] = useState({});
+  const [pendingAction, setPendingAction] = useState(null); // 'shortlist' or 'reject'
   const [candidates, setCandidates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -116,7 +117,8 @@ const FacultyDashboard = () => {
     setSelectedCandidate(null);
   };
 
-  const handleEvaluate = (candidate) => {
+  const handleEvaluate = (candidate, action) => {
+    setPendingAction(action); // 'shortlist' or 'reject'
     setEvaluationCandidate(candidate);
     setEvaluationScores({
       teachingCompetence: '',
@@ -132,6 +134,7 @@ const FacultyDashboard = () => {
   const closeEvaluationModal = () => {
     setEvaluationCandidate(null);
     setEvaluationScores({});
+    setPendingAction(null);
   };
 
   const handleScoreChange = (field, value) => {
@@ -172,7 +175,33 @@ const FacultyDashboard = () => {
       
       if (evalErr) throw evalErr;
       
-      alert('Evaluation submitted successfully!');
+      // Now update the status based on pending action
+      if (pendingAction) {
+        const { error: statusErr } = await supabase
+          .from('faculty_applications')
+          .update({ status: pendingAction === 'shortlist' ? 'shortlisted' : 'rejected' })
+          .eq('id', evaluationCandidate.id);
+        
+        if (statusErr) throw statusErr;
+
+        // Remove from localStorage assignments
+        const facultyAssignments = JSON.parse(localStorage.getItem('facultyAssignments') || '{}');
+        if (facultyAssignments[evaluationCandidate.id]) {
+          delete facultyAssignments[evaluationCandidate.id];
+          localStorage.setItem('facultyAssignments', JSON.stringify(facultyAssignments));
+        }
+
+        // Remove from local state
+        setCandidates(prev => prev.filter(c => c.id !== evaluationCandidate.id));
+      }
+      
+      const actionMessage = pendingAction === 'shortlist' 
+        ? 'Candidate shortlisted successfully!'
+        : pendingAction === 'reject'
+        ? 'Candidate rejected successfully!'
+        : 'Evaluation submitted successfully!';
+      
+      alert(actionMessage);
       closeEvaluationModal();
     } catch (error) {
       console.error('Error submitting evaluation:', error);
@@ -333,12 +362,6 @@ const FacultyDashboard = () => {
                       className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors font-medium shadow-md hover:shadow-lg"
                     >
                       View Details
-                    </button>
-                    <button
-                      onClick={() => handleEvaluate(candidate)}
-                      className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors font-medium shadow-md hover:shadow-lg"
-                    >
-                      Evaluate
                     </button>
                   </div>
                 </div>
@@ -696,18 +719,18 @@ const FacultyDashboard = () => {
                       {/* Action Buttons */}
                       <div className="flex gap-2">
                         <button
-                          onClick={() => updateApplicationStatus('shortlisted')}
+                          onClick={() => handleEvaluate(selectedCandidate, 'shortlist')}
                           disabled={updatingStatus || selectedCandidate.status === 'shortlisted'}
                           className="flex-1 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium text-sm"
                         >
-                          {updatingStatus ? 'Updating...' : 'Shortlist'}
+                          Shortlist
                         </button>
                         <button
-                          onClick={() => updateApplicationStatus('rejected')}
+                          onClick={() => handleEvaluate(selectedCandidate, 'reject')}
                           disabled={updatingStatus || selectedCandidate.status === 'rejected'}
                           className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium text-sm"
                         >
-                          {updatingStatus ? 'Updating...' : 'Reject'}
+                          Reject
                         </button>
                       </div>
                     </div>
@@ -735,10 +758,12 @@ const FacultyDashboard = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[95vh] overflow-y-auto">
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-green-50 to-emerald-50">
+            <div className={`flex items-center justify-between p-6 border-b ${pendingAction === 'shortlist' ? 'bg-gradient-to-r from-green-50 to-emerald-50' : 'bg-gradient-to-r from-red-50 to-rose-50'}`}>
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">Faculty Evaluation</h2>
-                <p className="text-sm text-gray-600 mt-1">Evaluate candidate performance</p>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {pendingAction === 'shortlist' ? 'Shortlist' : 'Reject'} Candidate - Evaluation Required
+                </h2>
+                <p className="text-sm text-gray-600 mt-1">Please evaluate the candidate before {pendingAction === 'shortlist' ? 'shortlisting' : 'rejecting'}</p>
               </div>
               <button
                 onClick={closeEvaluationModal}
