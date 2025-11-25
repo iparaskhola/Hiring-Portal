@@ -885,7 +885,7 @@ const FacultyDashboard = () => {
           </div>
         </div>
       )}
-    </>;
+    </>
   );
 };
 
