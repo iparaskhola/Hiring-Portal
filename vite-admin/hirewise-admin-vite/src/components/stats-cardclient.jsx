@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase-client'
 
-import { Users, Eye, CheckCircle, XCircle, Trash2 } from 'lucide-react'
+import { Users, Eye, CheckCircle, XCircle, Trash2, Star } from 'lucide-react'
 
 export default function StatsCardsClient({ selectedView = 'teaching' }) {
   const [stats, setStats] = useState({
@@ -18,6 +18,11 @@ export default function StatsCardsClient({ selectedView = 'teaching' }) {
   const [panelLoading, setPanelLoading] = useState(false)
   const [panelItems, setPanelItems] = useState([])
   const [panelError, setPanelError] = useState(null)
+  
+  // Evaluation modal state
+  const [selectedEvaluation, setSelectedEvaluation] = useState(null)
+  const [evaluationData, setEvaluationData] = useState(null)
+  const [evaluationLoading, setEvaluationLoading] = useState(false)
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -139,6 +144,35 @@ export default function StatsCardsClient({ selectedView = 'teaching' }) {
     } finally {
       setPanelLoading(false);
     }
+  }
+
+  const viewEvaluation = async (applicationId) => {
+    setEvaluationLoading(true)
+    setSelectedEvaluation(applicationId)
+    
+    try {
+      const { data, error } = await supabase
+        .from('faculty_evaluations')
+        .select('*')
+        .eq('application_id', applicationId)
+        .order('evaluated_at', { ascending: false })
+        .limit(1)
+        .single()
+      
+      if (error) throw error
+      setEvaluationData(data)
+    } catch (err) {
+      console.error('Error fetching evaluation:', err)
+      alert('No evaluation found for this candidate or error loading evaluation.')
+      setSelectedEvaluation(null)
+    } finally {
+      setEvaluationLoading(false)
+    }
+  }
+
+  const closeEvaluationModal = () => {
+    setSelectedEvaluation(null)
+    setEvaluationData(null)
   }
 
   if (loading) return <div>Loading stats...</div>
@@ -300,7 +334,7 @@ export default function StatsCardsClient({ selectedView = 'teaching' }) {
                         {(activePanel === 'shortlisted' || activePanel === 'rejected') && (
                           <td className="px-4 py-2 text-sm">
                             <button
-                              onClick={() => window.alert('Evaluation feature - To be implemented: View evaluation scores and remarks')}
+                              onClick={() => viewEvaluation(a.id)}
                               className="text-blue-600 hover:text-blue-800 underline text-xs"
                             >
                               Check Evaluation
@@ -313,6 +347,119 @@ export default function StatsCardsClient({ selectedView = 'teaching' }) {
                 </table>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Evaluation Viewing Modal */}
+      {selectedEvaluation && evaluationData && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              {/* Header */}
+              <div className="flex justify-between items-start mb-6">
+                <div className="flex items-center gap-2">
+                  <Star className="w-6 h-6 text-yellow-500 fill-yellow-500" />
+                  <h2 className="text-2xl font-bold text-gray-800">Faculty Evaluation</h2>
+                </div>
+                <button
+                  onClick={closeEvaluationModal}
+                  className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
+                >
+                  ×
+                </button>
+              </div>
+
+              {/* Faculty Info */}
+              <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+                <p className="text-sm text-gray-600">Evaluated by</p>
+                <p className="text-lg font-semibold text-gray-800">{evaluationData.faculty_name}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {new Date(evaluationData.evaluated_at).toLocaleString('en-US', {
+                    dateStyle: 'medium',
+                    timeStyle: 'short'
+                  })}
+                </p>
+              </div>
+
+              {/* Evaluation Scores */}
+              <div className="space-y-4 mb-6">
+                <h3 className="font-semibold text-gray-700 mb-3">Evaluation Scores</h3>
+                
+                {[
+                  { label: 'Teaching Competence', value: evaluationData.teaching_competence },
+                  { label: 'Research Potential', value: evaluationData.research_potential },
+                  { label: 'Industry Experience', value: evaluationData.industry_experience },
+                  { label: 'Communication Skills', value: evaluationData.communication_skills },
+                  { label: 'Subject Knowledge', value: evaluationData.subject_knowledge },
+                  { label: 'Overall Suitability', value: evaluationData.overall_suitability }
+                ].map((item, idx) => (
+                  <div key={idx} className="space-y-1">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-700 font-medium">{item.label}</span>
+                      <span className="text-gray-900 font-bold">{item.value}/10</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2.5">
+                      <div
+                        className={`h-2.5 rounded-full ${
+                          item.value >= 8 ? 'bg-green-500' :
+                          item.value >= 6 ? 'bg-blue-500' :
+                          item.value >= 4 ? 'bg-yellow-500' :
+                          'bg-red-500'
+                        }`}
+                        style={{ width: `${(item.value / 10) * 100}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Average Score */}
+              <div className="mb-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-700 font-semibold">Average Score</span>
+                  <span className="text-2xl font-bold text-purple-700">
+                    {(
+                      (evaluationData.teaching_competence +
+                        evaluationData.research_potential +
+                        evaluationData.industry_experience +
+                        evaluationData.communication_skills +
+                        evaluationData.subject_knowledge +
+                        evaluationData.overall_suitability) / 6
+                    ).toFixed(2)}/10
+                  </span>
+                </div>
+              </div>
+
+              {/* Remarks */}
+              {evaluationData.remarks && (
+                <div className="mb-4">
+                  <h3 className="font-semibold text-gray-700 mb-2">Remarks</h3>
+                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <p className="text-gray-700 whitespace-pre-wrap">{evaluationData.remarks}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Close Button */}
+              <div className="flex justify-end mt-6">
+                <button
+                  onClick={closeEvaluationModal}
+                  className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Loading State */}
+      {evaluationLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 shadow-xl">
+            <p className="text-gray-700">Loading evaluation...</p>
           </div>
         </div>
       )}
