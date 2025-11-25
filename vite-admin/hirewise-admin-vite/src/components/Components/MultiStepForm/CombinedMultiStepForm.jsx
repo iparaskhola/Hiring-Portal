@@ -667,7 +667,7 @@ const EducationDetails = ({ formData, setFormData, onNext, onPrevious, onSaveExi
         Bachelor's Degree
       </h3>
       <div className="degree-fields-row">
-        <div className="form-field" style={{ flex: '1' }}>
+        <div className="form-field" style={{ flex: '1.5' }}>
           <label htmlFor="bachelorInstitute">Institution/University*</label>
           <select
             id="bachelorInstitute"
@@ -758,7 +758,7 @@ const EducationDetails = ({ formData, setFormData, onNext, onPrevious, onSaveExi
           />
           {errors.bachelorDegreeName && <span className="error">{errors.bachelorDegreeName}</span>}
         </div>
-        <div className="form-field" style={{ flex: '0 0 auto', width: '180px' }}>
+        <div className="form-field" style={{ flex: '0 0 auto', width: '150px' }}>
           <label htmlFor="bachelorYear">Passing Year*</label>
           <input
             type="number"
@@ -773,7 +773,7 @@ const EducationDetails = ({ formData, setFormData, onNext, onPrevious, onSaveExi
         </div>
       </div>
       <div className="form-fields-row" style={{ marginTop: '1rem' }}>
-        <div className="form-field" style={{ flex: '1' }}>
+        <div className="form-field" style={{ flex: '0 0 auto', width: '280px' }}>
           <label htmlFor="bachelorCgpaScale">Grading Scale*</label>
           <select
             id="bachelorCgpaScale"
@@ -786,7 +786,7 @@ const EducationDetails = ({ formData, setFormData, onNext, onPrevious, onSaveExi
             <option value="cgpa4">CGPA (Out of 4)</option>
           </select>
         </div>
-        <div className="form-field" style={{ flex: '1' }}>
+        <div className="form-field" style={{ flex: '0 0 auto', width: '200px' }}>
           <label htmlFor="bachelorCgpa">
             {formData.bachelorCgpaScale === 'percentage' ? 'Percentage*' : 
              formData.bachelorCgpaScale === 'cgpa10' ? 'CGPA (Out of 10)*' : 'CGPA (Out of 4)*'}
@@ -820,7 +820,7 @@ const EducationDetails = ({ formData, setFormData, onNext, onPrevious, onSaveExi
         Master's Degree
       </h3>
       <div className="degree-fields-row">
-        <div className="form-field" style={{ flex: '1' }}>
+        <div className="form-field" style={{ flex: '1.5' }}>
           <label htmlFor="masterInstitute">Institution/University*</label>
           <select
             id="masterInstitute"
@@ -898,7 +898,7 @@ const EducationDetails = ({ formData, setFormData, onNext, onPrevious, onSaveExi
           )}
           {errors.masterDegreeName && <span className="error">{errors.masterDegreeName}</span>}
         </div>
-        <div className="form-field" style={{ flex: '0 0 auto', width: '180px' }}>
+        <div className="form-field" style={{ flex: '0 0 auto', width: '150px' }}>
           <label htmlFor="masterYear">Passing Year*</label>
           <input
             type="number"
@@ -913,7 +913,7 @@ const EducationDetails = ({ formData, setFormData, onNext, onPrevious, onSaveExi
         </div>
       </div>
       <div className="form-fields-row" style={{ marginTop: '1rem' }}>
-        <div className="form-field" style={{ flex: '1' }}>
+        <div className="form-field" style={{ flex: '0 0 auto', width: '280px' }}>
           <label htmlFor="masterCgpaScale">Grading Scale*</label>
           <select
             id="masterCgpaScale"
@@ -926,7 +926,7 @@ const EducationDetails = ({ formData, setFormData, onNext, onPrevious, onSaveExi
             <option value="cgpa4">CGPA (Out of 4)</option>
           </select>
         </div>
-        <div className="form-field" style={{ flex: '1' }}>
+        <div className="form-field" style={{ flex: '0 0 auto', width: '200px' }}>
           <label htmlFor="masterCgpa">
             {formData.masterCgpaScale === 'percentage' ? 'Percentage*' : 
              formData.masterCgpaScale === 'cgpa10' ? 'CGPA (Out of 10)*' : 'CGPA (Out of 4)*'}
@@ -959,48 +959,71 @@ const EducationDetails = ({ formData, setFormData, onNext, onPrevious, onSaveExi
       }}>
         Ph.D.
       </h3>
-      <div className="form-field">
-        <label htmlFor="phdStatus">Status*</label>
-        <select
-          id="phdStatus"
-          name="phdStatus"
-          value={formData.phdStatus || 'Not done'}
-          onChange={handleInputChange}
-        >
-          <option value="Not done">Not done</option>
-          <option value="Pursuing">Pursuing</option>
-          <option value="Submitted">Submitted</option>
-          <option value="Awarded">Awarded</option>
-        </select>
+      <div className="degree-fields-row">
+        <div className="form-field" style={{ flex: '0 0 auto', width: '180px' }}>
+          <label htmlFor="phdStatus">Status*</label>
+          <select
+            id="phdStatus"
+            name="phdStatus"
+            value={formData.phdStatus || 'Not done'}
+            onChange={handleInputChange}
+          >
+            <option value="Not done">Not done</option>
+            <option value="Pursuing">Pursuing</option>
+            <option value="Submitted">Submitted</option>
+            <option value="Awarded">Awarded</option>
+          </select>
+        </div>
+        {formData.phdStatus !== 'Not done' && (
+          <>
+            <div className="form-field" style={{ flex: '0 0 auto', width: '150px' }}>
+              <label htmlFor="phdYear">
+                {formData.phdStatus === 'Pursuing' 
+                  ? 'Pursuing Year*' 
+                  : (formData.phdStatus === 'Awarded' ? 'Passed Year*' : 'Passing Year*')}
+              </label>
+              <input
+                type="number"
+                id="phdYear"
+                name="phdYear"
+                value={formData.phdYear || ''}
+                onChange={handleInputChange}
+                min={formData.masterYear || formData.bachelorYear || 1950}
+                max={formData.phdStatus === 'Awarded' ? new Date().getFullYear() : 2050}
+              />
+              {errors.phdYear && <span className="error">{errors.phdYear}</span>}
+            </div>
+            <div className="form-field" style={{ flex: '1.5' }}>
+              <label htmlFor="phdInstitute">Institution/University*</label>
+              <select
+                id="phdInstitute"
+                name="phdInstitute"
+                value={formData.phdInstitute || ''}
+                onChange={handleInputChange}
+              >
+                <option value="">Select Institution</option>
+                {COLLEGES.map((u) => (
+                  <option key={u} value={u}>{u}</option>
+                ))}
+                <option value="Other">Other</option>
+              </select>
+              {formData.phdInstitute === 'Other' && (
+                <input
+                  type="text"
+                  placeholder="Enter college/university"
+                  value={formData.phdInstituteOther || ''}
+                  onChange={(e) => setFormData({ ...formData, phdInstituteOther: e.target.value })}
+                  style={{ marginTop: '8px' }}
+                />
+              )}
+              {errors.phdInstitute && <span className="error">{errors.phdInstitute}</span>}
+            </div>
+          </>
+        )}
       </div>
       {formData.phdStatus !== 'Not done' && (
-        <div className="degree-fields-row">
-          <div className="form-field">
-            <label htmlFor="phdInstitute">Institution/University*</label>
-            <select
-              id="phdInstitute"
-              name="phdInstitute"
-              value={formData.phdInstitute || ''}
-              onChange={handleInputChange}
-            >
-              <option value="">Select Institution</option>
-              {COLLEGES.map((u) => (
-                <option key={u} value={u}>{u}</option>
-              ))}
-              <option value="Other">Other</option>
-            </select>
-            {formData.phdInstitute === 'Other' && (
-              <input
-                type="text"
-                placeholder="Enter college/university"
-                value={formData.phdInstituteOther || ''}
-                onChange={(e) => setFormData({ ...formData, phdInstituteOther: e.target.value })}
-                style={{ marginTop: '8px' }}
-              />
-            )}
-            {errors.phdInstitute && <span className="error">{errors.phdInstitute}</span>}
-          </div>
-          <div className="form-field">
+        <div className="degree-fields-row" style={{ marginTop: '1rem' }}>
+          <div className="form-field" style={{ flex: '1' }}>
             <label htmlFor="phdAreaSpecialization">Area of Specialization*</label>
             <input
               type="text"
@@ -1011,24 +1034,7 @@ const EducationDetails = ({ formData, setFormData, onNext, onPrevious, onSaveExi
             />
             {errors.phdAreaSpecialization && <span className="error">{errors.phdAreaSpecialization}</span>}
           </div>
-          <div className="form-field">
-            <label htmlFor="phdYear">
-              {formData.phdStatus === 'Pursuing' 
-                ? 'Pursuing Year*' 
-                : (formData.phdStatus === 'Awarded' ? 'Passed Year*' : 'Passing Year*')}
-            </label>
-            <input
-              type="number"
-              id="phdYear"
-              name="phdYear"
-              value={formData.phdYear || ''}
-              onChange={handleInputChange}
-              min={formData.masterYear || formData.bachelorYear || 1950}
-              max={formData.phdStatus === 'Awarded' ? new Date().getFullYear() : 2050}
-            />
-            {errors.phdYear && <span className="error">{errors.phdYear}</span>}
-          </div>
-          <div className="form-field">
+          <div className="form-field" style={{ flex: '1' }}>
             <label htmlFor="phdTitle">Title*</label>
             <input
               type="text"
