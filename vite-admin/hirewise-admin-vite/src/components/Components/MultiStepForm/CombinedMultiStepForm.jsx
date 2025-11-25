@@ -255,6 +255,7 @@ const PersonalInformation = ({ formData, setFormData, onNext, onPrevious, onSave
     if (!formData.phone) newErrors.phone = 'Phone number is required';
     else if (!/^\d{10}$/.test(formData.phone)) newErrors.phone = 'Phone number must be 10 digits';
     if (!formData.gender) newErrors.gender = 'Gender is required';
+    if (!formData.category) newErrors.category = 'Category is required';
     if (!formData.dateOfBirth) newErrors.dateOfBirth = 'Date of Birth is required';
     else {
       const birthDate = new Date(formData.dateOfBirth);
@@ -366,41 +367,59 @@ const PersonalInformation = ({ formData, setFormData, onNext, onPrevious, onSave
           </div>
         </div>
       </div>
-      <div className="form-field">
-        <label>Gender*</label>
-        <div className="radio-group">
-          <label>
-            <input
-              type="radio"
-              name="gender"
-              value="Male"
-              checked={formData.gender === 'Male'}
-              onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-            />
-            Male
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="gender"
-              value="Female"
-              checked={formData.gender === 'Female'}
-              onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-            />
-            Female
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="gender"
-              value="Other"
-              checked={formData.gender === 'Other'}
-              onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-            />
-            Other
-          </label>
+      <div className="form-fields-row">
+        <div className="form-field">
+          <label>Gender*</label>
+          <div className="radio-group">
+            <label>
+              <input
+                type="radio"
+                name="gender"
+                value="Male"
+                checked={formData.gender === 'Male'}
+                onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+              />
+              Male
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="gender"
+                value="Female"
+                checked={formData.gender === 'Female'}
+                onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+              />
+              Female
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="gender"
+                value="Other"
+                checked={formData.gender === 'Other'}
+                onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+              />
+              Other
+            </label>
+          </div>
+          {errors.gender && <span className="error">{errors.gender}</span>}
         </div>
-        {errors.gender && <span className="error">{errors.gender}</span>}
+        <div className="form-field">
+          <label htmlFor="category">Category*</label>
+          <select
+            id="category"
+            value={formData.category || ''}
+            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+          >
+            <option value="">Select Category</option>
+            <option value="GEN">GEN (General)</option>
+            <option value="SC">SC (Scheduled Caste)</option>
+            <option value="ST">ST (Scheduled Tribe)</option>
+            <option value="OBC">OBC (Other Backward Class)</option>
+            <option value="EWS">EWS (Economically Weaker Section)</option>
+          </select>
+          {errors.category && <span className="error">{errors.category}</span>}
+        </div>
       </div>
       <div className="form-fields-row">
         <div className="form-field">
