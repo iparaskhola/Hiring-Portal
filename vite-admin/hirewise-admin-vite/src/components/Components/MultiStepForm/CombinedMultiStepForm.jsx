@@ -773,14 +773,14 @@ const EducationDetails = ({ formData, setFormData, onNext, onPrevious, onSaveExi
             onChange={handleInputChange}
           >
             <option value="percentage">Percentage (Out of 100)</option>
-            <option value="cgpa10">CGPA</option>
+            <option value="cgpa10">CGPA (Out of 10)</option>
             <option value="cgpa4">CGPA (Out of 4)</option>
           </select>
         </div>
         <div className="form-field" style={{ flex: '0 0 auto', width: '220px' }}>
           <label htmlFor="bachelorCgpa">
             {formData.bachelorCgpaScale === 'percentage' ? 'Percentage*' : 
-             formData.bachelorCgpaScale === 'cgpa10' ? 'CGPA*' : 'CGPA (Out of 4)*'}
+             formData.bachelorCgpaScale === 'cgpa10' ? 'CGPA (Out of 10)*' : 'CGPA (Out of 4)*'}
           </label>
           <input
             type="number"
@@ -905,14 +905,14 @@ const EducationDetails = ({ formData, setFormData, onNext, onPrevious, onSaveExi
             onChange={handleInputChange}
           >
             <option value="percentage">Percentage (Out of 100)</option>
-            <option value="cgpa10">CGPA</option>
+            <option value="cgpa10">CGPA (Out of 10)</option>
             <option value="cgpa4">CGPA (Out of 4)</option>
           </select>
         </div>
         <div className="form-field" style={{ flex: '0 0 auto', width: '220px' }}>
           <label htmlFor="masterCgpa">
             {formData.masterCgpaScale === 'percentage' ? 'Percentage*' : 
-             formData.masterCgpaScale === 'cgpa10' ? 'CGPA*' : 'CGPA (Out of 4)*'}
+             formData.masterCgpaScale === 'cgpa10' ? 'CGPA (Out of 10)*' : 'CGPA (Out of 4)*'}
           </label>
           <input
             type="number"
