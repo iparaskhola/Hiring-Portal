@@ -655,7 +655,16 @@ const EducationDetails = ({ formData, setFormData, onNext, onPrevious, onSaveExi
 
   return (
     <form onSubmit={handleSubmit}>
-      <h3 className="degree-section-title">Bachelor's Degree</h3>
+      <h3 className="degree-section-title" style={{ 
+        fontSize: '1.4rem', 
+        fontWeight: '600', 
+        color: '#1e40af', 
+        marginBottom: '1.5rem',
+        paddingBottom: '0.75rem',
+        borderBottom: '2px solid #3b82f6'
+      }}>
+        Bachelor's Degree
+      </h3>
       <div className="degree-fields-row">
         <div className="form-field">
           <label htmlFor="bachelorInstitute">Institution/University*</label>
@@ -800,7 +809,17 @@ const EducationDetails = ({ formData, setFormData, onNext, onPrevious, onSaveExi
         </div>
       </div>
 
-      <h3 className="degree-section-title">Master's Degree</h3>
+      <h3 className="degree-section-title" style={{ 
+        fontSize: '1.4rem', 
+        fontWeight: '600', 
+        color: '#1e40af', 
+        marginBottom: '1.5rem',
+        marginTop: '2.5rem',
+        paddingBottom: '0.75rem',
+        borderBottom: '2px solid #3b82f6'
+      }}>
+        Master's Degree
+      </h3>
       <div className="degree-fields-row">
         <div className="form-field">
           <label htmlFor="masterInstitute">Institution/University*</label>
@@ -932,7 +951,17 @@ const EducationDetails = ({ formData, setFormData, onNext, onPrevious, onSaveExi
         </div>
       </div>
 
-      <h3 className="degree-section-title">Ph.D.</h3>
+      <h3 className="degree-section-title" style={{ 
+        fontSize: '1.4rem', 
+        fontWeight: '600', 
+        color: '#1e40af', 
+        marginBottom: '1.5rem',
+        marginTop: '2.5rem',
+        paddingBottom: '0.75rem',
+        borderBottom: '2px solid #3b82f6'
+      }}>
+        Ph.D.
+      </h3>
       <div className="form-field">
         <label htmlFor="phdStatus">Status*</label>
         <select
@@ -1220,7 +1249,16 @@ const Experience = ({ formData, setFormData, onNext, onPrevious, onSaveExit }) =
 
   return (
     <form onSubmit={handleSubmit}>
-      <h3 className="degree-section-title">Teaching Experience</h3>
+      <h3 className="degree-section-title" style={{ 
+        fontSize: '1.4rem', 
+        fontWeight: '600', 
+        color: '#1e40af', 
+        marginBottom: '1.5rem',
+        paddingBottom: '0.75rem',
+        borderBottom: '2px solid #3b82f6'
+      }}>
+        Teaching Experience
+      </h3>
       {(formData.teachingExperiences || []).map((exp, idx) => (
         <div
           className="degree-fields-row"
@@ -1351,7 +1389,17 @@ const Experience = ({ formData, setFormData, onNext, onPrevious, onSaveExit }) =
         </button>
       </div>
 
-      <h3 className="degree-section-title">Research Experience</h3>
+      <h3 className="degree-section-title" style={{ 
+        fontSize: '1.4rem', 
+        fontWeight: '600', 
+        color: '#1e40af', 
+        marginBottom: '1.5rem',
+        marginTop: '2.5rem',
+        paddingBottom: '0.75rem',
+        borderBottom: '2px solid #3b82f6'
+      }}>
+        Research Experience
+      </h3>
       {(formData.researchExperiences || []).map((exp, idx) => (
         <div
           className="degree-fields-row"
