@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Users, Eye, CheckCircle, XCircle, User, Building, ChevronDown, Filter, X } from 'lucide-react';
+import { Users, Eye, CheckCircle, XCircle, User, Building, ChevronDown, Filter, X, Star } from 'lucide-react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Charts from './charts'; // Adjust path as needed
 import { candidatesApi } from '../lib/api';
+import { supabase } from '../../lib/supabase-client';
 
 
 
@@ -258,10 +259,28 @@ const getPositionFilterOptions = () => {
     try {
       const fullData = await candidatesApi.getById(candidate.id);
       console.log('Full candidate data fetched:', fullData); // Debug log
+      
+      // Fetch faculty evaluations for this candidate
+      let evaluations = [];
+      try {
+        const { data: evalData, error: evalError } = await supabase
+          .from('faculty_evaluations')
+          .select('*')
+          .eq('application_id', candidate.id)
+          .order('evaluated_at', { ascending: false });
+        
+        if (!evalError && evalData) {
+          evaluations = evalData;
+        }
+      } catch (evalErr) {
+        console.error('Error fetching evaluations:', evalErr);
+      }
+      
       setSelectedCandidate({ 
         ...candidate, 
         ...fullData,
         listRank: candidate.listRank,
+        facultyEvaluations: evaluations,
         loading: false 
       });
     } catch (error) {
@@ -1132,6 +1151,67 @@ const getPositionFilterOptions = () => {
                           )}
                         </div>
                       </div>
+
+                      {/* Faculty Evaluations */}
+                      {selectedCandidate.facultyEvaluations && selectedCandidate.facultyEvaluations.length > 0 && (
+                        <div className="bg-white border rounded-lg p-4 shadow-sm">
+                          <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            <Star className="h-4 w-4 text-yellow-500" />
+                            Faculty Evaluations ({selectedCandidate.facultyEvaluations.length})
+                          </h3>
+                          <div className="space-y-4">
+                            {selectedCandidate.facultyEvaluations.map((evaluation, idx) => (
+                              <div key={idx} className="border-l-4 border-yellow-500 pl-4 bg-yellow-50 p-3 rounded">
+                                <div className="flex justify-between items-start mb-2">
+                                  <div>
+                                    <p className="text-sm font-bold text-gray-900">{evaluation.faculty_name}</p>
+                                    <p className="text-xs text-gray-600">{new Date(evaluation.evaluated_at).toLocaleDateString()}</p>
+                                  </div>
+                                  <div className="text-right">
+                                    <p className="text-xs text-gray-500">Average Score</p>
+                                    <p className="text-lg font-bold text-yellow-600">
+                                      {(
+                                        (evaluation.teaching_competence + 
+                                         evaluation.research_potential + 
+                                         evaluation.industry_experience + 
+                                         evaluation.communication_skills + 
+                                         evaluation.subject_knowledge + 
+                                         evaluation.overall_suitability) / 6
+                                      ).toFixed(1)}/10
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2 text-xs">
+                                  <div>
+                                    <p className="text-gray-600">Teaching: <span className="font-semibold text-gray-900">{evaluation.teaching_competence}/10</span></p>
+                                  </div>
+                                  <div>
+                                    <p className="text-gray-600">Research: <span className="font-semibold text-gray-900">{evaluation.research_potential}/10</span></p>
+                                  </div>
+                                  <div>
+                                    <p className="text-gray-600">Industry Exp: <span className="font-semibold text-gray-900">{evaluation.industry_experience}/10</span></p>
+                                  </div>
+                                  <div>
+                                    <p className="text-gray-600">Communication: <span className="font-semibold text-gray-900">{evaluation.communication_skills}/10</span></p>
+                                  </div>
+                                  <div>
+                                    <p className="text-gray-600">Subject Knowledge: <span className="font-semibold text-gray-900">{evaluation.subject_knowledge}/10</span></p>
+                                  </div>
+                                  <div>
+                                    <p className="text-gray-600">Overall: <span className="font-semibold text-gray-900">{evaluation.overall_suitability}/10</span></p>
+                                  </div>
+                                </div>
+                                {evaluation.remarks && (
+                                  <div className="mt-2 pt-2 border-t border-yellow-200">
+                                    <p className="text-xs text-gray-500 uppercase font-semibold">Remarks</p>
+                                    <p className="text-sm text-gray-900 mt-1">{evaluation.remarks}</p>
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </>
                   )}
                 </div>
