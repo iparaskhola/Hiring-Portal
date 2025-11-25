@@ -292,9 +292,8 @@ const PersonalInformation = ({ formData, setFormData, onNext, onPrevious, onSave
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
           >
             <option value="">Select</option>
-            <option value="Mr">Mr</option>
-            <option value="Mrs">Mrs</option>
-            <option value="Miss">Miss</option>
+            <option value="Mr.">Mr.</option>
+            <option value="Ms.">Ms.</option>
             <option value="Dr.">Dr.</option>
           </select>
           {errors.title && <span className="error">{errors.title}</span>}
