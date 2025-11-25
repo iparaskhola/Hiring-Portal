@@ -295,8 +295,7 @@ const PersonalInformation = ({ formData, setFormData, onNext, onPrevious, onSave
             <option value="Mr">Mr</option>
             <option value="Mrs">Mrs</option>
             <option value="Miss">Miss</option>
-            <option value="Dr">Dr</option>
-            <option value="Prof">Prof</option>
+            <option value="Dr.">Dr.</option>
           </select>
           {errors.title && <span className="error">{errors.title}</span>}
         </div>
