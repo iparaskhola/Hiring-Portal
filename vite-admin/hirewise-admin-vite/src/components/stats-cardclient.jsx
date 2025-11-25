@@ -276,6 +276,9 @@ export default function StatsCardsClient({ selectedView = 'teaching' }) {
                       <th className="px-4 py-2">Position</th>
                       <th className="px-4 py-2">Department</th>
                       <th className="px-4 py-2">Status</th>
+                      {(activePanel === 'shortlisted' || activePanel === 'rejected') && (
+                        <th className="px-4 py-2">Evaluation</th>
+                      )}
                       <th className="px-4 py-2">Submitted</th>
                     </tr>
                   </thead>
@@ -294,6 +297,16 @@ export default function StatsCardsClient({ selectedView = 'teaching' }) {
                             {a.status || 'unknown'}
                           </span>
                         </td>
+                        {(activePanel === 'shortlisted' || activePanel === 'rejected') && (
+                          <td className="px-4 py-2 text-sm">
+                            <button
+                              onClick={() => window.alert('Evaluation feature - To be implemented: View evaluation scores and remarks')}
+                              className="text-blue-600 hover:text-blue-800 underline text-xs"
+                            >
+                              Check Evaluation
+                            </button>
+                          </td>
+                        )}
                         <td className="px-4 py-2 text-sm text-gray-500">{a.created_at ? new Date(a.created_at).toLocaleDateString() : '—'}</td>
                       </tr>) )}
                   </tbody>
