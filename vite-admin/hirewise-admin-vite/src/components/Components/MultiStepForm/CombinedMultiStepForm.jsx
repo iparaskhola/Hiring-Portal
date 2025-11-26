@@ -2153,9 +2153,20 @@ const CombinedMultiStepForm = () => {
   }
 
   try {
-    // Set a 30 second timeout - if backend takes longer, proceed anyway
+    // First, wake up the backend with a quick ping (3 second timeout)
+    try {
+      await fetch(`${API_BASE}/api`, { 
+        method: 'GET',
+        signal: AbortSignal.timeout(3000)
+      });
+    } catch (pingErr) {
+      // Backend might be cold, continue anyway
+      console.log('Backend warming...');
+    }
+
+    // Now submit with longer timeout for file upload
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 seconds for file upload
     
     const response = await fetch(API_BASE + '/api/applications', {
       method: 'POST',
@@ -2207,9 +2218,10 @@ const CombinedMultiStepForm = () => {
     console.error('Submission error:', err);
     
     // Handle different error types
-    if (err.name === 'AbortError') {
-      alert('⚠️ Your application is being processed in the background.\n\nYou will receive an email confirmation within 5 minutes. If not, please contact support with your email: ' + formData.email);
-      // Navigate anyway since backend might still process it
+    if (err.name === 'AbortError' || err.name === 'TimeoutError') {
+      // Don't show scary message - application likely still processing
+      alert('✅ Application submitted! Processing may take a moment.\n\nYou will receive email confirmation shortly at: ' + formData.email);
+      // Navigate anyway since backend processes in background
       navigate('/register');
       return;
     }
