@@ -1179,11 +1179,21 @@ const Experience = ({ formData, setFormData, onNext, onPrevious, onSaveExit }) =
         if (exp.teachingInstitution === 'Other' && !exp.teachingInstitutionOther?.trim()) {
           entryErrors.teachingInstitution = 'Please specify your institution';
         }
-        if (exp.teachingStartDate && exp.teachingStartDate > today) {
+        // Validate start date format and value
+        if (!exp.teachingStartDate) {
+          entryErrors.teachingStartDate = 'Start date is required';
+        } else if (!/^\d{4}-\d{2}-\d{2}$/.test(exp.teachingStartDate)) {
+          entryErrors.teachingStartDate = 'Please enter a valid date';
+        } else if (exp.teachingStartDate > today) {
           entryErrors.teachingStartDate = 'Start date cannot be in the future';
         }
-        if (exp.teachingEndDate && exp.teachingEndDate > today) {
-          entryErrors.teachingEndDate = 'End date cannot be in the future';
+        // Validate end date format and value
+        if (exp.teachingEndDate) {
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(exp.teachingEndDate)) {
+            entryErrors.teachingEndDate = 'Please enter a valid date';
+          } else if (exp.teachingEndDate > today) {
+            entryErrors.teachingEndDate = 'End date cannot be in the future';
+          }
         }
         // Validate end date is after start date
         if (exp.teachingStartDate && exp.teachingEndDate && exp.teachingEndDate < exp.teachingStartDate) {
@@ -1202,10 +1212,22 @@ const Experience = ({ formData, setFormData, onNext, onPrevious, onSaveExit }) =
         else if (exp.researchInstitution === 'Other' && !exp.researchInstitutionOther?.trim()) {
           entryErrors.researchInstitution = 'Please specify your institution';
         }
-        if (!exp.researchStartDate) entryErrors.researchStartDate = 'Start date is required';
-        else if (exp.researchStartDate > today) entryErrors.researchStartDate = 'Start date cannot be in the future';
-        if (!exp.researchEndDate) entryErrors.researchEndDate = 'End date is required';
-        else if (exp.researchEndDate > today) entryErrors.researchEndDate = 'End date cannot be in the future';
+        // Validate start date format and value
+        if (!exp.researchStartDate) {
+          entryErrors.researchStartDate = 'Start date is required';
+        } else if (!/^\d{4}-\d{2}-\d{2}$/.test(exp.researchStartDate)) {
+          entryErrors.researchStartDate = 'Please enter a valid date';
+        } else if (exp.researchStartDate > today) {
+          entryErrors.researchStartDate = 'Start date cannot be in the future';
+        }
+        // Validate end date format and value
+        if (!exp.researchEndDate) {
+          entryErrors.researchEndDate = 'End date is required';
+        } else if (!/^\d{4}-\d{2}-\d{2}$/.test(exp.researchEndDate)) {
+          entryErrors.researchEndDate = 'Please enter a valid date';
+        } else if (exp.researchEndDate > today) {
+          entryErrors.researchEndDate = 'End date cannot be in the future';
+        }
         // Validate end date is after start date
         if (exp.researchStartDate && exp.researchEndDate && exp.researchEndDate < exp.researchStartDate) {
           entryErrors.researchEndDate = 'End date must be after start date';
@@ -1356,6 +1378,7 @@ const Experience = ({ formData, setFormData, onNext, onPrevious, onSaveExit }) =
               value={exp.teachingStartDate}
               max={new Date().toISOString().split('T')[0]}
               onChange={(e) => handleTeachingChange(idx, e)}
+              required
             />
             {errors.teaching && errors.teaching[idx] && errors.teaching[idx].teachingStartDate && (
               <span className="error">{errors.teaching[idx].teachingStartDate}</span>
@@ -1494,6 +1517,7 @@ const Experience = ({ formData, setFormData, onNext, onPrevious, onSaveExit }) =
               value={exp.researchStartDate}
               max={new Date().toISOString().split('T')[0]}
               onChange={(e) => handleResearchChange(idx, e)}
+              required
             />
             {errors.research && errors.research[idx] && errors.research[idx].researchStartDate && (
               <span className="error">{errors.research[idx].researchStartDate}</span>
@@ -1508,6 +1532,7 @@ const Experience = ({ formData, setFormData, onNext, onPrevious, onSaveExit }) =
               value={exp.researchEndDate}
               max={new Date().toISOString().split('T')[0]}
               onChange={(e) => handleResearchChange(idx, e)}
+              required
             />
             {errors.research && errors.research[idx] && errors.research[idx].researchEndDate && (
               <span className="error">{errors.research[idx].researchEndDate}</span>
